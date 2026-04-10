@@ -1,0 +1,1487 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SELCO Dryer Advisor</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Lora:ital,wght@0,500;0,600;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g1:#1b4332;--g2:#2d6a4f;--g3:#40916c;--g4:#74c69d;--g5:#b7e4c7;--g6:#d8f3dc;--g7:#f0faf2;
+  --ink:#1a1a1a;--sub:#52606d;--mute:#8d9fad;--bdr:#dde3e7;
+  --cream:#f7f4ef;--warm:#f0ebe2;
+  --amber:#c97d10;--amber2:#fff3dc;--amber3:#7a4d00;
+  --red:#b83232;--red2:#fdecea;--sky2:#e8f3fb;
+  --shadow:0 2px 16px rgba(27,67,50,.08);
+  --shadow-md:0 6px 30px rgba(27,67,50,.12);
+  --shadow-lg:0 12px 48px rgba(27,67,50,.16);
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Sora',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;font-size:14px}
+nav{background:var(--g1);height:64px;padding:0 36px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;box-shadow:0 2px 20px rgba(0,0,0,.2)}
+.nav-brand{display:flex;align-items:center;gap:12px}
+.nav-mark{width:34px;height:34px;border-radius:9px;background:var(--g4);display:flex;align-items:center;justify-content:center;font-size:17px}
+.nav-title{font-family:'Lora',serif;font-size:18px;color:#fff;line-height:1}
+.nav-sub{font-size:10.5px;color:var(--g5);margin-top:2px;font-weight:300}
+.nav-chip{background:rgba(116,198,157,.18);border:1px solid rgba(116,198,157,.35);color:var(--g5);padding:4px 12px;border-radius:20px;font-size:10.5px;font-weight:600;letter-spacing:.4px}
+.wrap{max-width:960px;margin:0 auto;padding:32px 24px 100px}
+.stepper{display:flex;align-items:flex-start;margin-bottom:32px;padding:0 4px}
+.st{display:flex;flex-direction:column;align-items:center;gap:5px}
+.st-dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--bdr);background:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:var(--mute);transition:all .25s;flex-shrink:0}
+.st-dot.active{background:var(--g1);border-color:var(--g1);color:#fff}
+.st-dot.done{background:var(--g4);border-color:var(--g4);color:#fff;font-size:14px}
+.st-lbl{font-size:10px;font-weight:600;color:var(--mute);text-align:center;line-height:1.2;transition:color .25s;white-space:nowrap}
+.st-lbl.active{color:var(--g1);font-weight:700}
+.st-line{flex:1;height:2px;background:var(--bdr);margin:14px 3px 0;transition:background .25s}
+.st-line.done{background:var(--g4)}
+.card{background:#fff;border-radius:var(--r);border:1.5px solid var(--bdr);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;transition:border-color .2s}
+.card.open{border-color:var(--g3)}
+.card-hd{padding:18px 22px;display:flex;align-items:center;gap:13px;cursor:pointer;user-select:none;transition:background .15s}
+.card-hd:hover{background:var(--g7)}
+.card.open .card-hd{background:var(--g7)}
+.card-ico{width:38px;height:38px;border-radius:10px;background:var(--g6);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:background .2s}
+.card.open .card-ico{background:var(--g1)}
+.card-inf{flex:1}
+.card-title{font-size:14px;font-weight:700;color:var(--ink)}
+.card-sub{font-size:11px;color:var(--mute);margin-top:1px}
+.pill{padding:3px 10px;border-radius:8px;font-size:10.5px;font-weight:700;white-space:nowrap}
+.pill-done{background:var(--g5);color:var(--g1)}
+.pill-pend{background:var(--warm);color:var(--mute)}
+.chevron{font-size:10px;color:var(--mute);transition:transform .25s;margin-left:6px;flex-shrink:0}
+.card.open .chevron{transform:rotate(180deg)}
+.card-body{padding:4px 22px 24px;border-top:1.5px solid var(--g6)}
+.card.collapsed .card-body{display:none}
+.ql{font-size:13.5px;font-weight:700;color:var(--ink);margin-top:20px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.qnum{background:var(--g1);color:#fff;border-radius:50%;width:19px;height:19px;font-size:9.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.qh{font-size:11.5px;color:var(--mute);margin-bottom:6px;line-height:1.55}
+.og{display:grid;gap:9px;margin-top:9px}
+.og-2{grid-template-columns:1fr 1fr}
+.og-3{grid-template-columns:1fr 1fr 1fr}
+.ob{border:2px solid var(--bdr);border-radius:11px;padding:12px 14px;background:#fff;cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:11px;transition:all .16s;font-family:'Sora',sans-serif}
+.ob:hover{border-color:var(--g4);background:var(--g7);transform:translateY(-1px);box-shadow:var(--shadow)}
+.ob.sel{border-color:var(--g1);background:var(--g7);box-shadow:0 0 0 1px var(--g1)}
+.ob .oi{font-size:20px;flex-shrink:0;margin-top:1px}
+.ob .on{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.3}
+.ob .od{font-size:10.5px;color:var(--mute);margin-top:2px;line-height:1.5}
+.ob.sel .on{color:var(--g1)}
+.tr{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.tc{border:2px solid var(--bdr);border-radius:20px;padding:7px 15px;font-size:12px;font-weight:600;cursor:pointer;transition:all .16s;background:#fff;font-family:'Sora',sans-serif;color:var(--sub)}
+.tc:hover{border-color:var(--g4);background:var(--g7)}
+.tc.sel{background:var(--g1);border-color:var(--g1);color:#fff}
+.bc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:9px}
+.bc-btn{border:2px solid var(--bdr);border-radius:12px;padding:15px 10px 12px;background:#fff;cursor:pointer;text-align:center;transition:all .16s;font-family:'Sora',sans-serif;position:relative}
+.bc-btn:hover{border-color:var(--g4);background:var(--g7);transform:translateY(-1px)}
+.bc-btn.sel{border-color:var(--g1);background:var(--g7);box-shadow:0 0 0 1px var(--g1)}
+.bc-ico{font-size:26px;display:block;margin-bottom:6px}
+.bc-name{font-size:11px;font-weight:700;color:var(--ink);line-height:1.3}
+.bc-ex{font-size:9.5px;color:var(--mute);margin-top:3px;line-height:1.4}
+.bc-btn.sel .bc-name{color:var(--g1)}
+.bc-checkmark{position:absolute;top:7px;right:9px;font-size:13px;color:var(--g3);display:none;font-weight:700}
+.bc-btn.sel .bc-checkmark{display:block}
+.tag-zone{margin-top:14px;background:var(--g7);border-radius:11px;border:1.5px dashed var(--g4);padding:16px}
+.tag-zone-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g2);margin-bottom:10px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{border:1.5px solid var(--g5);border-radius:7px;padding:5px 11px;font-size:11.5px;font-weight:500;cursor:pointer;background:#fff;color:var(--ink);font-family:'Sora',sans-serif;user-select:none;transition:all .14s}
+.tag:hover{border-color:var(--g3);background:var(--g5)}
+.tag.sel{background:var(--g1);border-color:var(--g1);color:#fff}
+.nb{border-radius:11px;padding:13px 15px;font-size:12.5px;line-height:1.6;display:flex;gap:10px;margin-top:12px;align-items:flex-start}
+.nb-warn{background:var(--amber2);border:1.5px solid #e8a020;color:var(--amber3)}
+.nb-info{background:var(--sky2);border:1.5px solid #3a8fc0;color:#0d3b5a}
+.nb-ok{background:var(--g6);border:1.5px solid var(--g4);color:var(--g1)}
+.nb-err{background:var(--red2);border:1.5px solid #d04040;color:var(--red)}
+.nb-sym{flex-shrink:0;font-size:15px;margin-top:1px}
+.nb-txt strong{font-weight:700}
+.feat-strip{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.feat{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:10.5px;font-weight:700;letter-spacing:.2px}
+.feat-yes{background:#d4edda;color:#155724;border:1px solid #b8dbc8}
+.feat-no{background:#f8d7da;color:#721c24;border:1px solid #e8b8bc}
+.feat-cond{background:var(--amber2);color:var(--amber3);border:1px solid #e8c060}
+.act{display:flex;justify-content:flex-end;gap:11px;margin-top:24px}
+.btn{padding:11px 24px;border-radius:11px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .18s;letter-spacing:-.1px}
+.btn-out{background:#fff;border:2px solid var(--bdr);color:var(--sub)}
+.btn-out:hover{border-color:var(--g4)}
+.btn-go{background:var(--g1);color:#fff;box-shadow:0 4px 16px rgba(27,67,50,.25)}
+.btn-go:hover:not(:disabled){background:var(--g2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(27,67,50,.3)}
+.btn-go:disabled{background:var(--mute);box-shadow:none;cursor:not-allowed;transform:none}
+#results{display:none}
+#results.show{display:block}
+.res-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--g3);margin-bottom:6px}
+.res-h{font-family:'Lora',serif;font-size:28px;color:var(--g1);margin-bottom:6px;line-height:1.2}
+.res-sub{font-size:13px;color:var(--sub);margin-bottom:20px;line-height:1.6;max-width:680px}
+.rec-grid{display:grid;gap:18px;margin-bottom:24px}
+.rec-grid.cols-1{grid-template-columns:1fr;max-width:500px}
+.rec-grid.cols-2{grid-template-columns:1fr 1fr}
+.rec-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+.rec-card{border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-lg);border:2px solid transparent;transition:transform .2s,box-shadow .2s}
+.rec-card:hover{transform:translateY(-3px);box-shadow:0 18px 54px rgba(27,67,50,.18)}
+.rec-card.tier-fit{border-color:var(--g1)}
+.rec-card.tier-realistic{border-color:var(--amber)}
+.rec-card.tier-ideal{border-color:#b8860b}
+.rec-top{padding:18px 18px 14px}
+.tier-fit .rec-top{background:var(--g1)}
+.tier-realistic .rec-top{background:#7a4d00}
+.tier-ideal .rec-top{background:#4a3000}
+.rec-tier-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.6);margin-bottom:4px}
+.rec-top-row{display:flex;align-items:flex-start;gap:11px}
+.rec-ico{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.rec-name{font-family:'Lora',serif;font-size:17px;color:#fff;line-height:1.2}
+.rec-badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.rb{background:rgba(255,255,255,.18);color:#fff;padding:2px 7px;border-radius:5px;font-size:9.5px;font-weight:700;letter-spacing:.3px}
+.rec-body{background:#fff;padding:16px 18px}
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.spec-box{background:var(--warm);border-radius:8px;padding:7px 10px}
+.spec-l{font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--mute);font-weight:700;margin-bottom:2px}
+.spec-v{font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--ink)}
+.rec-sect{font-size:9px;text-transform:uppercase;letter-spacing:.7px;font-weight:700;color:var(--g2);margin:11px 0 6px;padding-bottom:3px;border-bottom:1px solid var(--g6)}
+.rec-item{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:var(--ink);margin-bottom:4px;line-height:1.5}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.dot-ok{background:var(--g4)}
+.dot-warn{background:var(--amber)}
+.nb-in-card{border-radius:8px;padding:9px 12px;margin-top:10px;font-size:11px;line-height:1.6}
+.nb-in-card.warn{background:var(--amber2);border:1.5px solid #e8a020;color:var(--amber3)}
+.nb-in-card.info{background:var(--sky2);border:1.5px solid #3a8fc0;color:#0d3b5a}
+.nb-in-card.ok{background:var(--g6);border:1.5px solid var(--g4);color:var(--g1)}
+.nb-in-card.err{background:var(--red2);border:1.5px solid #d04040;color:var(--red)}
+.comp-wrap{margin-top:30px}
+.comp-title{font-family:'Lora',serif;font-size:20px;color:var(--g1);margin-bottom:4px}
+.comp-sub{font-size:12px;color:var(--mute);margin-bottom:14px}
+.comp-table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden;box-shadow:var(--shadow-md);border:1.5px solid var(--bdr);font-size:12px}
+.comp-table th{background:var(--g1);color:#fff;padding:11px 13px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.comp-table td{padding:10px 13px;border-bottom:1px solid var(--g6);vertical-align:top;line-height:1.4}
+.comp-table tr:last-child td{border-bottom:none}
+.comp-table tr:nth-child(even) td{background:var(--warm)}
+.summary-card{background:#fff;border-radius:var(--r);border:1.5px solid var(--bdr);box-shadow:var(--shadow-md);margin-top:28px;overflow:hidden}
+.summary-card-hd{background:var(--g1);padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+.summary-card-hd h3{font-family:'Lora',serif;font-size:19px;color:#fff}
+.summary-card-hd span{font-size:11px;color:var(--g5);font-family:'JetBrains Mono',monospace}
+.summary-body{padding:22px 24px}
+.sum-section{margin-bottom:20px}
+.sum-section:last-child{margin-bottom:0}
+.sum-sec-title{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;font-weight:700;color:var(--g2);margin-bottom:10px;padding-bottom:6px;border-bottom:1.5px solid var(--g6)}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sum-field{background:var(--warm);border-radius:8px;padding:9px 12px}
+.sum-lbl{font-size:9.5px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.sum-val{font-size:12.5px;font-weight:600;color:var(--ink)}
+.sum-val.c-fit{color:var(--g1);font-weight:700}
+.sum-val.c-real{color:#7a4d00;font-weight:700}
+.sum-val.c-ideal{color:#4a3000;font-weight:700}
+.sum-cautions{background:var(--amber2);border:1.5px solid #e8a020;border-radius:9px;padding:12px 15px;margin-top:10px;font-size:12px;color:var(--amber3);line-height:1.7}
+.reset-row{display:flex;justify-content:center;margin-top:36px}
+.btn-ghost{background:none;border:2px solid var(--bdr);color:var(--mute);padding:9px 22px;border-radius:10px;font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .18s}
+.btn-ghost:hover{border-color:var(--red);color:var(--red)}
+.fade{animation:fu .3s ease both}
+.fade2{animation:fu .3s ease .1s both}
+.fade3{animation:fu .3s ease .18s both}
+.fade4{animation:fu .3s ease .24s both}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){
+  .bc-grid{grid-template-columns:repeat(2,1fr)}
+  .og-3{grid-template-columns:1fr 1fr}
+  .rec-grid.cols-2,.rec-grid.cols-3{grid-template-columns:1fr}
+  .sum-grid{grid-template-columns:1fr}
+  nav{padding:0 16px}
+  .nav-chip{display:none}
+  .wrap{padding:20px 14px 80px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-brand">
+    <div class="nav-mark">🌿</div>
+    <div>
+      <div class="nav-title">SELCO Dryer Advisor</div>
+      <div class="nav-sub">Field Team Decision Tool</div>
+    </div>
+  </div>
+  <div class="nav-chip">v7.0 · 2025</div>
+</nav>
+
+<div class="wrap">
+  <div class="stepper" id="stepper">
+    <div class="st"><div class="st-dot active" id="sc1">1</div><div class="st-lbl active" id="sl1">User</div></div>
+    <div class="st-line" id="sln1"></div>
+    <div class="st"><div class="st-dot" id="sc2">2</div><div class="st-lbl" id="sl2">Commodity</div></div>
+    <div class="st-line" id="sln2"></div>
+    <div class="st"><div class="st-dot" id="sc3">3</div><div class="st-lbl" id="sl3">Scale</div></div>
+    <div class="st-line" id="sln3"></div>
+    <div class="st"><div class="st-dot" id="sc4">4</div><div class="st-lbl" id="sl4">Context</div></div>
+    <div class="st-line" id="sln4"></div>
+    <div class="st"><div class="st-dot" id="sc5">5</div><div class="st-lbl" id="sl5">Result</div></div>
+  </div>
+
+  <div id="formArea">
+    <!-- Card 1 -->
+    <div class="card open" id="card1">
+      <div class="card-hd" onclick="toggleCard(1)">
+        <div class="card-ico">👤</div>
+        <div class="card-inf"><div class="card-title">End User Profile</div><div class="card-sub">Who will operate this dryer?</div></div>
+        <span class="pill pill-pend" id="p1">Pending</span><span class="chevron">▼</span>
+      </div>
+      <div class="card-body">
+        <div class="ql"><span class="qnum">1</span> User category</div>
+        <div class="og og-3" id="g-user">
+          <button class="ob" onclick="pick('user','individual',this)"><span class="oi">🧑‍🌾</span><div><div class="on">Individual / Household</div><div class="od">Small farmer, fisher, home processor</div></div></button>
+          <button class="ob" onclick="pick('user','shg',this)"><span class="oi">👥</span><div><div class="on">SHG / FPO / Collective</div><div class="od">Community group, cooperative</div></div></button>
+          <button class="ob" onclick="pick('user','sme',this)"><span class="oi">🏭</span><div><div class="on">SME / Enterprise</div><div class="od">Small or medium business</div></div></button>
+        </div>
+        <div class="ql"><span class="qnum">2</span> Export or modern retail supply?</div>
+        <div class="tr" id="g-export">
+          <button class="tc" onclick="chip('export','yes',this)">✈️ Yes – export / modern retail</button>
+          <button class="tc" onclick="chip('export','no',this)">🏪 No – local / regional markets</button>
+        </div>
+        <div class="ql"><span class="qnum">3</span> Frequency of use</div>
+        <div class="tr" id="g-freq">
+          <button class="tc" onclick="chip('freq','daily',this)">📅 Daily / Continuous</button>
+          <button class="tc" onclick="chip('freq','seasonal',this)">🌾 Seasonal (peak harvest)</button>
+          <button class="tc" onclick="chip('freq','occasional',this)">⏳ Occasional</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card collapsed" id="card2">
+      <div class="card-hd" onclick="toggleCard(2)">
+        <div class="card-ico">🥕</div>
+        <div class="card-inf"><div class="card-title">Commodity Selection</div><div class="card-sub">Form → category → specific items</div></div>
+        <span class="pill pill-pend" id="p2">Pending</span><span class="chevron">▼</span>
+      </div>
+      <div class="card-body">
+        <div class="ql"><span class="qnum">4</span> Primary form of material being dried</div>
+        <div class="og og-3" id="g-form">
+          <button class="ob" onclick="pickForm('solid',this)"><span class="oi">🫑</span><div><div class="on">Solid / Pieces</div><div class="od">Sliced, whole, chopped produce</div></div></button>
+          <button class="ob" onclick="pickForm('granular',this)"><span class="oi">🌾</span><div><div class="on">Granular / Grain / Powder</div><div class="od">Paddy, maize, seeds, ground spices</div></div></button>
+          <button class="ob" onclick="pickForm('slurry',this)"><span class="oi">🥣</span><div><div class="on">Paste / Slurry / Liquid</div><div class="od">Pulp, extract, milk, thin-sheet products</div></div></button>
+        </div>
+        <div id="slurryPath" style="display:none">
+          <div class="nb nb-warn" style="margin-top:14px"><span class="nb-sym">⚠️</span><div class="nb-txt"><strong>Important:</strong> Most liquid or paste products need large industrial dryers (Drum or Spray) — these are expensive and need a lot of electricity. <strong>Exception:</strong> thin flat products like papad or fruit leather can use a Cabinet Tray Dryer.</div></div>
+          <div class="ql" style="margin-top:18px"><span class="qnum">5</span> Type of paste / slurry / liquid</div>
+          <div class="og og-2" id="g-slurry">
+            <button class="ob" onclick="pick('slurryType','papad',this)"><span class="oi">🫓</span><div><div class="on">Thin-sheet products</div><div class="od">Papad, fryums, fruit leather, rice crackers, chutney sheets</div></div></button>
+            <button class="ob" onclick="pick('slurryType','pulp',this)"><span class="oi">🧃</span><div><div class="on">Fruit / Vegetable Pulp to Powder</div><div class="od">Mango pulp, tomato puree, amla, spice paste to dried powder</div></div></button>
+            <button class="ob" onclick="pick('slurryType','dairy',this)"><span class="oi">🥛</span><div><div class="on">Dairy / Liquid</div><div class="od">Milk, whey, liquid extracts to spray-dried powder</div></div></button>
+            <button class="ob" onclick="pick('slurryType','viscous',this)"><span class="oi">🍯</span><div><div class="on">Viscous Paste / Mash</div><div class="od">Potato mash, cassava paste, cereal slurry to flakes or chips</div></div></button>
+          </div>
+          <div id="slurryWarn"></div>
+        </div>
+        <div id="solidPath" style="display:none">
+          <div class="ql" style="margin-top:18px"><span class="qnum">5</span> Select ONE broad commodity category</div>
+          <div class="qh">Run a separate assessment for different crop types to keep recommendations accurate.</div>
+          <div class="bc-grid" id="g-broadcat">
+            <button class="bc-btn" onclick="pickCat('spices',this)"><span class="bc-checkmark">✓</span><span class="bc-ico">🌶️</span><div class="bc-name">Spices</div><div class="bc-ex">Chilli, turmeric, ginger, garlic, pepper…</div></button>
+            <button class="bc-btn" onclick="pickCat('horti',this)"><span class="bc-checkmark">✓</span><span class="bc-ico">🥭</span><div class="bc-name">High-Value Horti Fruits</div><div class="bc-ex">Mango, pineapple, jackfruit, grapes, apricot…</div></button>
+            <button class="bc-btn" onclick="pickCat('otherfruit',this)"><span class="bc-checkmark">✓</span><span class="bc-ico">🍎</span><div class="bc-name">Other Fruits</div><div class="bc-ex">Apple, pear, fig, plum, banana, peach…</div></button>
+            <button class="bc-btn" onclick="pickCat('vegetables',this)"><span class="bc-checkmark">✓</span><span class="bc-ico">🥦</span><div class="bc-name">Vegetables</div><div class="bc-ex">Tomato, onion, carrot, moringa, cassava…</div></button>
+            <button class="bc-btn" onclick="pickCat('herbs',this)"><span class="bc-checkmark">✓</span><span class="bc-ico">🌿</span><div class="bc-name">Herbs &amp; Leafy</div><div class="bc-ex">Mint, tulsi, parsley, lemongrass, seaweed…</div></button>
+            <button class="bc-btn" onclick="pickCat('grains',this)"><span class="bc-checkmark">✓</span><span class="bc-ico">🌾</span><div class="bc-name">Grains &amp; Pulses</div><div class="bc-ex">Paddy, maize, groundnut, millets, soybean…</div></button>
+            <button class="bc-btn" onclick="pickCat('animal',this)"><span class="bc-checkmark">✓</span><span class="bc-ico">🐟</span><div class="bc-name">Fish &amp; Meat</div><div class="bc-ex">Fish, shrimp, small dried fish, jerky…</div></button>
+            <button class="bc-btn" onclick="pickCat('specialty',this)"><span class="bc-checkmark">✓</span><span class="bc-ico">🍄</span><div class="bc-name">Specialty / Other</div><div class="bc-ex">Mushroom, bamboo shoots, jackfruit chips…</div></button>
+          </div>
+          <div id="itemZone" style="display:none;margin-top:2px">
+            <div class="tag-zone">
+              <div class="tag-zone-lbl" id="tagZoneTitle">Select specific items</div>
+              <div class="tags" id="tagList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card collapsed" id="card3">
+      <div class="card-hd" onclick="toggleCard(3)">
+        <div class="card-ico">⚖️</div>
+        <div class="card-inf"><div class="card-title">Scale &amp; Budget</div><div class="card-sub">Batch volume and investment capacity</div></div>
+        <span class="pill pill-pend" id="p3">Pending</span><span class="chevron">▼</span>
+      </div>
+      <div class="card-body">
+        <div class="ql"><span class="qnum">6</span> Approximate batch volume per drying cycle</div>
+        <div class="tr" id="g-batch">
+          <button class="tc" onclick="chip('batch','tiny',this)">5–25 kg</button>
+          <button class="tc" onclick="chip('batch','small',this)">25–50 kg</button>
+          <button class="tc" onclick="chip('batch','medium',this)">50–100 kg</button>
+          <button class="tc" onclick="chip('batch','large',this)">100–500 kg</button>
+          <button class="tc" onclick="chip('batch','xlarge',this)">500 kg – 1 T</button>
+          <button class="tc" onclick="chip('batch','bulk',this)">1 T – 5 T+</button>
+        </div>
+        <div class="ql" style="margin-top:20px"><span class="qnum">7</span> Project / equipment budget</div>
+        <div class="tr" id="g-budget">
+          <button class="tc" onclick="chip('budget','b1',this)">₹5k – 20k</button>
+          <button class="tc" onclick="chip('budget','b2',this)">₹20k – 75k</button>
+          <button class="tc" onclick="chip('budget','b3',this)">₹75k – 1.6L</button>
+          <button class="tc" onclick="chip('budget','b4',this)">₹1.6L – 6L</button>
+          <button class="tc" onclick="chip('budget','b5',this)">₹6L – 20L</button>
+          <button class="tc" onclick="chip('budget','b6',this)">₹20L – 50L</button>
+          <button class="tc" onclick="chip('budget','b7',this)">₹50L+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card collapsed" id="card4">
+      <div class="card-hd" onclick="toggleCard(4)">
+        <div class="card-ico">🌍</div>
+        <div class="card-inf"><div class="card-title">Location &amp; Energy</div><div class="card-sub">Climate, space, and electricity</div></div>
+        <span class="pill pill-pend" id="p4">Pending</span><span class="chevron">▼</span>
+      </div>
+      <div class="card-body">
+        <div class="ql"><span class="qnum">8</span> Sunshine availability</div>
+        <div class="og og-3" id="g-climate">
+          <button class="ob" onclick="pick('climate','high',this)"><span class="oi">☀️</span><div><div class="on">High Sunshine</div><div class="od">250+ sunny days/year — consistently strong solar</div></div></button>
+          <button class="ob" onclick="pick('climate','moderate',this)"><span class="oi">⛅</span><div><div class="on">Moderate Sunshine</div><div class="od">150–250 sunny days/year — seasonal clouds</div></div></button>
+          <button class="ob" onclick="pick('climate','low',this)"><span class="oi">🌧️</span><div><div class="on">Low Sunshine</div><div class="od">Fewer than 150 sunny days/year — frequent rain or overcast</div></div></button>
+        </div>
+        <div class="ql" style="margin-top:18px"><span class="qnum">9</span> Electricity availability</div>
+        <div class="tr" id="g-elec">
+          <button class="tc" onclick="chip('elec','stable',this)">⚡ Stable grid power</button>
+          <button class="tc" onclick="chip('elec','intermittent',this)">🔌 Intermittent / unreliable</button>
+          <button class="tc" onclick="chip('elec','none',this)">❌ No electricity</button>
+        </div>
+        <div class="ql" style="margin-top:18px"><span class="qnum">10</span> Available space</div>
+        <div class="tr" id="g-space">
+          <button class="tc" onclick="chip('space','large',this)">🏞️ Large (&gt;100 m²)</button>
+          <button class="tc" onclick="chip('space','moderate',this)">🏡 Moderate (25–100 m²)</button>
+          <button class="tc" onclick="chip('space','small',this)">🏘️ Small (&lt;25 m²)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="act">
+      <button class="btn btn-out" onclick="resetAll()">↺ Reset</button>
+      <button class="btn btn-go" id="goBtn" onclick="compute()" disabled>Get Recommendation →</button>
+    </div>
+  </div>
+
+  <div id="results">
+    <button onclick="downloadPDF()" style="margin-bottom:15px;padding:10px 16px;border-radius:8px;border:none;background:#1b4332;color:white;font-weight:600;cursor:pointer;">
+⬇️ Download Recommendation
+</button>
+    <div id="resHeader"></div>
+    <div id="alertZone"></div>
+    <div id="recCards"></div>
+    <div id="compZone" class="comp-wrap"></div>
+    <div id="summaryCard"></div>
+    <div class="reset-row"><button class="btn-ghost" onclick="resetAll()">← Start New Assessment</button></div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────
+var S = { user:null,export:null,freq:null,form:null,slurryType:null,broadCat:null,items:new Set(),batch:null,budget:null,climate:null,elec:null,space:null };
+
+// ── COMMODITY DATA ─────────────────────────────────────
+var CATS = {
+  spices:{
+    label:'Spices',
+    note:'A Box Dryer works for household-level drying of simple spices in good sunshine. A Cabinet Tray Dryer is the standard choice at SHG or small commercial level. For export or premium quality, a Vacuum Dryer preserves aroma and colour far better than any other option. For very large volumes at FPO/SME scale (local market), a Tunnel Dryer is appropriate.',
+    items:[
+      {id:'red_chilli',name:'Red Chilli (Guntur / Byadgi / Teja)'},{id:'kashmiri_chilli',name:'Kashmiri Chilli'},
+      {id:'paprika',name:'Paprika (Sweet / Smoked Bell Pepper)'},{id:'turmeric',name:'Turmeric (Haldi)'},
+      {id:'ginger',name:'Ginger (Adrak)'},{id:'garlic',name:'Garlic (Lahsun — flakes / powder)'},
+      {id:'coriander_seed',name:'Coriander Seeds (Dhaniya)'},{id:'coriander_leaf',name:'Coriander Leaf (dried)'},
+      {id:'black_pepper',name:'Black Pepper (Kali Mirch)'},{id:'white_pepper',name:'White Pepper'},
+      {id:'cumin',name:'Cumin Seeds (Jeera)'},{id:'caraway',name:'Caraway / Black Cumin (Shah Jeera)'},
+      {id:'fenugreek',name:'Fenugreek Seeds (Methi Dana)'},{id:'fenugreek_leaf',name:'Fenugreek Leaf / Kasuri Methi'},
+      {id:'cardamom_green',name:'Green Cardamom (Elaichi)'},{id:'cardamom_black',name:'Black Cardamom (Badi Elaichi)'},
+      {id:'fennel',name:'Fennel Seeds (Saunf)'},{id:'ajwain',name:'Carom Seeds (Ajwain)'},
+      {id:'mustard',name:'Mustard Seeds (Sarson / Rai)'},{id:'clove',name:'Clove (Laung)'},
+      {id:'cinnamon',name:'Cinnamon / Cassia (Dalchini)'},{id:'star_anise',name:'Star Anise (Chakra Phool)'},
+      {id:'nutmeg',name:'Nutmeg (Jaiphal)'},{id:'mace',name:'Mace (Javitri)'},
+      {id:'bay_leaf',name:'Bay Leaf / Tej Patta (dried)'}
+    ]
+  },
+  horti:{
+    label:'High-Value Horticultural Fruits',
+    note:'These fruits are delicate — too much heat destroys colour, aroma, and nutrition. A Freeze Dryer gives the best quality. A Vacuum Dryer is the next best. A Cabinet Tray Dryer can work at field level but must have a working electric backup and calibrated thermostat — solar alone is not reliable enough for these fruits. Tunnel Dryers are NOT suitable — they cannot control temperature precisely enough.',
+    items:[
+      {id:'mango',name:'Mango (sliced)'},{id:'pineapple',name:'Pineapple'},{id:'jackfruit',name:'Jackfruit'},
+      {id:'grapes',name:'Grapes / Raisins'},{id:'apricot',name:'Apricot / Khurmani'},{id:'strawberry',name:'Strawberry'},
+      {id:'blueberry',name:'Blueberry'},{id:'cranberry',name:'Cranberry'},{id:'guava',name:'Guava'},
+      {id:'papaya',name:'Papaya'},{id:'amla',name:'Amla / Indian Gooseberry'},{id:'sour_cherry',name:'Sour Cherry'},
+      {id:'plum_h',name:'Plum / Prune'},{id:'pomegranate',name:'Pomegranate'}
+    ]
+  },
+  otherfruit:{
+    label:'Other Fruits',
+    note:'A Vacuum Dryer or Freeze Dryer gives the best quality. A Cabinet Tray Dryer is the practical choice at farm or SHG level — solar panels help but an electric backup is needed for reliable results. Always check moisture before storing.',
+    items:[
+      {id:'apple',name:'Apple'},{id:'pear',name:'Pear'},{id:'fig',name:'Fig'},
+      {id:'cherry',name:'Cherry'},{id:'peach',name:'Peach'},{id:'banana',name:'Banana (chips)'}
+    ]
+  },
+  vegetables:{
+    label:'Vegetables',
+    note:'Blanching before drying is important for most vegetables — it preserves colour and slows spoilage. A Vacuum Dryer or Freeze Dryer is best for keeping nutrients. A Cabinet Tray Dryer works well at farm level with an electric backup. Always check moisture before storing.',
+    items:[
+      {id:'tomato',name:'Tomato (sliced / halved)'},{id:'onion',name:'Onion (sliced / flakes)'},
+      {id:'garlic_veg',name:'Garlic (flakes / granules / powder)'},{id:'carrot',name:'Carrot (sliced / shredded)'},
+      {id:'cabbage',name:'Cabbage (shredded)'},{id:'moringa_pod',name:'Moringa Pods / Drumstick (sliced)'},
+      {id:'cassava',name:'Cassava / Tapioca (chips / sliced)'},{id:'potato',name:'Potato (sliced / diced)'},
+      {id:'spinach',name:'Spinach (leaves)'},{id:'okra',name:'Okra / Bhindi (sliced)'},
+      {id:'ivy_gourd',name:'Ivy Gourd / Tindora'},{id:'bitter_gourd',name:'Bitter Gourd / Karela'},
+      {id:'raw_banana',name:'Raw Banana / Plantain (chips)'},{id:'sweet_potato',name:'Sweet Potato (sliced / chips)'},
+      {id:'beetroot',name:'Beetroot (sliced / powder)'},{id:'capsicum',name:'Capsicum / Bell Pepper (sliced)'},
+      {id:'green_peas',name:'Green Peas (blanched)'}
+    ]
+  },
+  herbs:{
+    label:'Herbs & Leafy',
+    note:'⚠️ Volume alert: Fresh herbs and leafy crops have very low bulk density — 25–50 kg by weight fills the space of a 50–100 kg batch of denser produce. Always account for tray count, not just weight. A Vacuum Dryer is the best choice — it protects aroma, taste, and medicinal value. A Cabinet Tray Dryer is the practical option at farm level — it needs an electric backup alongside solar. Always check the product is fully dry before storing.',
+    items:[
+      {id:'mint',name:'Mint (Pudina)'},{id:'tulsi',name:'Tulsi / Holy Basil'},{id:'sweet_basil',name:'Sweet Basil'},
+      {id:'parsley',name:'Parsley'},{id:'dill',name:'Dill Leaf / Sowa'},{id:'lemongrass',name:'Lemongrass'},
+      {id:'rosemary',name:'Rosemary'},{id:'thyme',name:'Thyme'},{id:'oregano',name:'Oregano'},
+      {id:'curry_leaf',name:'Curry Leaf (Kadi Patta)'},{id:'moringa_leaf',name:'Moringa Leaf (Drumstick Leaf)'},
+      {id:'stevia',name:'Stevia Leaf'},{id:'ashwagandha',name:'Ashwagandha Leaf / Root'},
+      {id:'medicinal',name:'Medicinal Herbs (general)'},{id:'seaweed',name:'Seaweed / Sea Vegetables'}
+    ]
+  },
+  grains:{
+    label:'Grains & Pulses',
+    note:'A Bubble Dryer runs on solar only — no electricity needed — and is the best choice for off-grid farmers in sunny areas. For large volumes with electricity, a Tunnel Dryer works well. Cabinet and Fluidized Bed Dryers are NOT recommended for grain drying. Always check moisture levels before bagging — storing wet grain leads to mould. Note: Millets (bajra, jowar, ragi) have lower bulk density than paddy or maize — 50 kg of millets occupies considerably more tray/floor space.',
+    items:[
+      {id:'paddy',name:'Paddy / Rice (wet paddy after harvest)'},{id:'maize',name:'Maize / Corn (cob or shelled)'},
+      {id:'groundnut',name:'Groundnut / Peanut (in shell or shelled)'},{id:'soybean',name:'Soybean'},
+      {id:'chickpea',name:'Chickpea / Chana'},{id:'lentils',name:'Lentils / Masoor Dal'},
+      {id:'pigeon_pea',name:'Pigeon Pea / Tur / Arhar Dal'},{id:'black_gram',name:'Black Gram / Urad Dal'},
+      {id:'green_gram',name:'Green Gram / Moong Dal'},{id:'millets',name:'Millets (Bajra, Jowar, Ragi, Foxtail)'},
+      {id:'sesame',name:'Sesame Seeds (Til)'},{id:'sunflower_seed',name:'Sunflower Seeds'},
+      {id:'flaxseed',name:'Flaxseed / Linseed (Alsi)'}
+    ]
+  },
+  animal:{
+    label:'Fish & Meat',
+    note:'Pre-treatment is always required before drying: wash and clean fish thoroughly, then salt (wet or dry salting) to reduce moisture and prevent bacterial growth, then drain for several hours before loading. Dryer choice is driven by budget, space, and energy availability. A Box Dryer is the entry-level option for households with tight budgets in sunny areas — it is significantly better than open sun drying. A Cabinet Tray Dryer gives much better hygiene, keeps insects out, and extends shelf life — use it where budget (₹75,000+) and electricity allow. At large SME scale, a Tunnel Dryer handles bulk volumes efficiently.',
+    items:[
+      {id:'fish',name:'Fish (whole / fillet)'},{id:'shrimp',name:'Shrimp / Prawn'},
+      {id:'small_fish',name:'Small Dried Fish'},{id:'meat',name:'Meat / Jerky'}
+    ]
+  },
+  specialty:{
+    label:'Specialty / Other',
+    note:'A Freeze Dryer gives the best results for mushrooms and bamboo shoots — it keeps texture and nutrients very well. A Vacuum Dryer is the next best option. A Cabinet Tray Dryer is the practical fallback.',
+    items:[
+      {id:'mushroom',name:'Mushroom'},{id:'bamboo',name:'Bamboo Shoots'},
+      {id:'jackchips',name:'Jackfruit Chips'},{id:'lotus_seeds',name:'Lotus Seeds'}
+    ]
+  }
+};
+
+// ── LOW DENSITY CATEGORIES ─────────────────────────────
+// These categories/items have high volume per kg — batch sizing must be upscaled one band
+var LOW_DENSITY_GRAIN_ITEMS  = ['millets'];
+var LOW_DENSITY_SPICE_ITEMS  = ['star_anise','bay_leaf','cinnamon','coriander_leaf','fenugreek_leaf','cardamom_black','cardamom_green'];
+
+function isLowDensity() {
+  if (S.broadCat === 'herbs') return true;
+  if (S.broadCat === 'grains' && S.items.size > 0 &&
+      Array.from(S.items).some(function(i){return LOW_DENSITY_GRAIN_ITEMS.indexOf(i)!==-1;})) return true;
+  if (S.broadCat === 'spices' && S.items.size > 0 &&
+      Array.from(S.items).some(function(i){return LOW_DENSITY_SPICE_ITEMS.indexOf(i)!==-1;})) return true;
+  return false;
+}
+
+function effectiveBatchKey() {
+  if (!isLowDensity()) return S.batch;
+  var keys = ['tiny','small','medium','large','xlarge','bulk'];
+  var idx = keys.indexOf(S.batch);
+  return idx < keys.length - 1 ? keys[idx + 1] : S.batch;
+}
+
+// ── DRYER CAPABILITIES ─────────────────────────────────
+var CAPS = {
+  box:      { tempControl:'no',  heatPump:false, exportReady:false, solarRole:'bonus',   elecBackupNote:'Solar adds warmth and speeds drying but the drying temperature cannot be set or controlled — it depends on sun and ambient heat.' },
+  cabinet:  { tempControl:'yes', heatPump:true,  exportReady:true,  solarRole:'bonus',   elecBackupNote:'Solar panels reduce electricity use, but an electric backup is mandatory. A heat pump version uses significantly less electricity — choose it when budget allows.' },
+  bubble:   { tempControl:'no',  heatPump:false, exportReady:false, solarRole:'only',    elecBackupNote:'No electricity required — runs fully on solar with a small solar-powered fan. No temperature control. Only suitable for grain drying.' },
+  tunnel:   { tempControl:'iot', heatPump:false, exportReady:false, solarRole:'primary', elecBackupNote:'Solar is the primary heat source with an electric heater backup and battery-powered fans. Temperature control only with an IoT add-on — not included in standard installation.' },
+  vacuum:   { tempControl:'yes', heatPump:false, exportReady:true,  solarRole:'none',    elecBackupNote:'Fully electric. Temperature is controlled precisely. Stable, uninterrupted power is strongly required.' },
+  freeze:   { tempControl:'yes', heatPump:false, exportReady:true,  solarRole:'none',    elecBackupNote:'Fully electric. Power must not cut out during the drying cycle — even a short power cut can spoil the entire batch.' },
+  fluidized:{ tempControl:'yes', heatPump:false, exportReady:true,  solarRole:'none',    elecBackupNote:'Fully electric. Only suitable for granular or powder-form spices and seeds — not for whole or solid produce.' },
+  spray:    { tempControl:'yes', heatPump:false, exportReady:true,  solarRole:'none',    elecBackupNote:'Fully electric. Inlet and outlet temperatures are controlled. Needs a consistent liquid feed throughout operation.' },
+  drum:     { tempControl:'yes', heatPump:false, exportReady:true,  solarRole:'none',    elecBackupNote:'Fully electric or steam-powered. Produces flakes or sheets — not fine powder.' }
+};
+
+// ── DRYER DEFINITIONS ──────────────────────────────────
+var DRYERS = {
+  box:{
+    name:'Box Dryer', icon:'📦', tag:'Electric / Hybrid (Solar Bonus)',
+    capacity:'5–50 kg/batch', dryTime:'1–3 days', cost:'₹5,000 – ₹75,000',
+    energy:'Electric primary; solar adds warmth. No temperature control.',
+    bestFor:[
+      'Spices like turmeric, ginger, coriander, red chilli at household scale',
+      'Dried fish and meat at household level in good sunshine — significantly safer than open sun drying',
+      'Getting started with value addition at lowest cost',
+      'Occasional or household use where budget is very tight (below ₹75,000)'
+    ],
+    avoid:[
+      'Grains — cannot guarantee safe moisture levels reliably',
+      'Delicate fruits and vegetables — no temperature control',
+      'Export or modern retail — no temperature precision',
+      'Low sunshine areas when running on solar only'
+    ],
+    cautions:[
+      'No temperature control — drying depends entirely on sun and ambient heat',
+      'An electric backup speeds drying but does NOT add temperature control',
+      'Solar-only: works in sunny or moderately sunny areas — always check moisture before storing',
+      'Fish: check mesh/screen integrity before each use to prevent insect access'
+    ],
+    batchOk:['tiny','small'], budgetOk:['b1','b2'],
+    catOk:['spices','animal','herbs'],
+    climateOk:['high','moderate','low'], elecOk:['stable','intermittent','none']
+  },
+  cabinet:{
+    name:'Cabinet Tray Dryer', icon:'🗄️', tag:'Electric / Hybrid (Solar Bonus)',
+    capacity:'50–500 kg/batch', dryTime:'5 hrs – 2 days', cost:'₹60,000 – ₹5,00,000',
+    energy:'Electric primary; solar collector adds efficiency. Electric backup mandatory. Heat pump option available.',
+    bestFor:[
+      'Delicate fruits like mango, grapes, pineapple, jackfruit, amla (temperature control is essential)',
+      'Mushrooms, herbs, spices, and vegetables at SHG or small commercial scale',
+      'Thin-sheet products like papad and fruit leather',
+      'Fish and meat — significantly better hygiene and pest control than open drying or Box Dryer',
+      'Export and modern retail when used with working electric backup and calibrated thermostat'
+    ],
+    avoid:[
+      'Grain drying — not appropriate for paddy, maize, or pulses',
+      'Budget below ₹75,000 — hard minimum is ₹60,000 requiring at least b3 budget',
+      'Solar-only use in low sunshine — not reliable enough'
+    ],
+    cautions:[
+      'Solar panels help but an electric backup is a MUST — do not rely on solar alone',
+      'Heat pump version uses much less electricity than a standard heater — worth it where budget allows',
+      'For delicate fruits: always check the thermostat is calibrated before each batch',
+      'Herbs and leafy crops: account for volume not just weight — tray loading will be lighter per tray'
+    ],
+    batchOk:['small','medium','large'], budgetOk:['b3','b4','b5','b6','b7'],
+    catOk:['horti','otherfruit','vegetables','herbs','spices','animal','specialty'],
+    slurryOk:['papad'],
+    climateOk:['high','moderate','low'], elecOk:['stable','intermittent','none']
+  },
+  bubble:{
+    name:'Bubble Dryer', icon:'🫧', tag:'Solar Only — No Grid Electricity Needed',
+    capacity:'100–1,000 kg/day', dryTime:'1–3 days', cost:'₹50,000 – ₹1,50,000+',
+    energy:'Solar only — direct heat + radiation. Small solar-powered fan. No grid electricity required.',
+    bestFor:[
+      'Paddy, rice and maize drying at farm-gate — fully off-grid',
+      'Farmers and FPOs with no electricity in sunny or moderately sunny areas',
+      'FPOs collecting grain before milling or storage',
+      'Seasonal peak-harvest grain drying at low operating cost'
+    ],
+    avoid:[
+      'Low sunshine or monsoon areas — solar not strong enough for safe grain drying',
+      'Horticultural, spice, or high-moisture crops',
+      'Sites smaller than 100 m² — needs large open space',
+      'Small batch sizes below 50 kg — too large a machine for small volumes'
+    ],
+    cautions:[
+      'No temperature control — works on solar heat only',
+      'Moderate sunshine: drying takes longer — always check grain moisture before bagging',
+      'Do not use during rainy months — not enough sun to dry safely',
+      'Needs more than 100 m² of open space for installation and loading'
+    ],
+    batchOk:['medium','large','xlarge'], budgetOk:['b2','b3'],
+    catOk:['grains'],
+    climateOk:['high','moderate'], elecOk:['stable','intermittent','none'],
+    needsSpace:'large'
+  },
+  tunnel:{
+    name:'Tunnel Dryer (Polycarbonate)', icon:'🏗️', tag:'Solar Primary + Electric Backup',
+    capacity:'500 kg – 10,000 kg/batch', dryTime:'6–24 hrs (sliced); 1–2 days (grains)', cost:'₹4,00,000 – ₹60,00,000',
+    energy:'Solar primary + electric heater backup + battery-backed fans.',
+    bestFor:[
+      'High-volume spices: red chilli, Kashmiri chilli, onion, garlic, ginger, turmeric at FPO/SME scale for local markets',
+      'Bulk grains, pulses, and seeds at large FPO / SME scale',
+      'Fish, shrimp, moringa at large scale for local or regional markets',
+      'Continuous or seasonal peak-harvest processing at high volume'
+    ],
+    avoid:[
+      'Export or modern retail — no reliable temperature control without IoT add-on',
+      'Delicate fruits (horti/otherfruit) — cannot control temperature precisely enough',
+      'Small or occasional users — starts at ₹4,00,000 for basic airflow-only units',
+      'Sites with no electricity — fans and backup heater need power'
+    ],
+    cautions:[
+      'Temperature control only with an IoT add-on — NOT included in standard installation',
+      'NOT recommended for export or delicate produce — discuss with SELCO team if export is required',
+      'Low sunshine: electric backup carries most of the drying load — running costs increase significantly',
+      'Needs more than 100 m² of open space for a standard installation'
+    ],
+    batchOk:['large','xlarge','bulk'], budgetOk:['b4','b5','b6','b7'],
+    catOk:['spices','vegetables','grains','animal','herbs'],
+    climateOk:['high','moderate','low'], elecOk:['stable','intermittent'],
+    needsSpace:'large'
+  },
+  vacuum:{
+    name:'Vacuum Dryer', icon:'🫙', tag:'Electric / Industrial',
+    capacity:'50 kg – 2,500 kg/batch', dryTime:'4–24 hrs', cost:'₹4,50,000 – ₹25,00,000',
+    energy:'Electricity — stable, uninterrupted power strongly required.',
+    bestFor:[
+      'High-value fruits: mango, strawberry, blueberry, pineapple, amla, jackfruit, papaya',
+      'Sensitive vegetables: garlic, onion, tomato, spinach, moringa',
+      'Herbs and medicinal plants where aroma and actives must be preserved',
+      'Spices (all types) — best option for preserving colour, aroma, and quality for export or premium markets',
+      'Export or premium-grade dried produce where colour and nutrition matter'
+    ],
+    avoid:[
+      'Sites with unreliable or no electricity',
+      'Grain drying — not cost-effective',
+      'Operations without a clear premium market to justify the cost'
+    ],
+    cautions:[
+      'Processes one batch at a time — not a continuous production line',
+      'Equipment and upkeep costs are high — only worthwhile with a premium buyer',
+      'Only makes financial sense if the buyer pays more for high-quality dried produce',
+      'Minimum realistic cost is ₹4.5L — if budget is in the ₹1.6L–6L range, costs may be tight; verify with SELCO team'
+    ],
+    batchOk:['medium','large','xlarge'], budgetOk:['b4','b5','b6','b7'],
+    catOk:['horti','otherfruit','vegetables','herbs','spices','animal','specialty'],
+    climateOk:['high','moderate','low'], elecOk:['stable']
+  },
+  fluidized:{
+    name:'Fluidized Bed Dryer', icon:'🌀', tag:'Industrial — Granular / Powder Spices Only',
+    capacity:'2.5–500 kg/batch', dryTime:'30–90 min', cost:'₹3,00,000 – ₹60,00,000',
+    energy:'Electricity + blower.',
+    bestFor:[
+      'Ground / granular spices: turmeric powder, chilli powder, coriander powder',
+      'Seeds and granular products needing fast, even drying',
+      'Pharmaceutical-grade granular health supplement processing'
+    ],
+    avoid:[
+      'Whole or solid produce — only works for granular or powder-form material',
+      'Grain drying (paddy, maize, pulses) — not appropriate',
+      'Small operators, SHGs, or individual users'
+    ],
+    cautions:[
+      'Only suitable for GRANULAR or POWDER form — NOT for solid or whole spices',
+      'All particles must be uniformly small in size — not for mixed or whole produce',
+      'Running costs are high — only makes sense at large volumes with a premium buyer'
+    ],
+    batchOk:['large','xlarge'], budgetOk:['b5','b6','b7'],
+    catOk:['spices'],
+    climateOk:['high','moderate','low'], elecOk:['stable'],
+    granularOnly:true,
+    industrial:true
+  },
+  spray:{
+    name:'Spray Dryer', icon:'💨', tag:'Industrial',
+    capacity:'10 kg/hr – 5,000 kg/hr', dryTime:'5–30 seconds', cost:'₹4,50,000 – ₹2,00,00,000+',
+    energy:'Electricity / Thermal.',
+    bestFor:[
+      'Converting fruit or vegetable pulp into fine powder — mango, tomato, amla, spice extracts',
+      'Milk powder, whey, coffee, or pharmaceutical extracts',
+      'Large-scale continuous powder production'
+    ],
+    avoid:['Small-scale or cost-sensitive operations','Individual or SHG users'],
+    cautions:[
+      'Gives better powder quality and finer particle size than a Drum Dryer',
+      'Needs a consistent liquid feed and stable electricity throughout',
+      'Very high cost — only worth it at very large volumes with a clear buyer'
+    ],
+    batchOk:['xlarge','bulk'], budgetOk:['b6','b7'],
+    catOk:['__slurry__'], slurryOk:['pulp','dairy'],
+    climateOk:['high','moderate','low'], elecOk:['stable'],
+    industrial:true
+  },
+  drum:{
+    name:'Drum Dryer', icon:'🥁', tag:'Industrial',
+    capacity:'3,000–7,000 kg/hr', dryTime:'Seconds – minutes', cost:'₹2,00,000 – ₹75,00,000+',
+    energy:'Electricity / Thermal (steam).',
+    bestFor:[
+      'Thick pastes like potato mash, cassava paste, or cereal slurry — produces flakes or chips',
+      'Fast continuous processing of thick viscous materials at large scale',
+      'A lower-cost alternative to Spray Drying when fine powder is not required'
+    ],
+    avoid:['Fine powder production — use Spray Dryer for better quality'],
+    cautions:[
+      'Output is flakes or sheets — not fine powder; use Spray Dryer if powder is needed',
+      'Always run small test batches first to get the texture right before scaling up',
+      'High cost — only worth it if you have very large quantities to process regularly'
+    ],
+    batchOk:['xlarge','bulk'], budgetOk:['b5','b6','b7'],
+    catOk:['__slurry__'], slurryOk:['viscous','pulp'],
+    climateOk:['high','moderate','low'], elecOk:['stable'],
+    industrial:true
+  },
+  freeze:{
+    name:'Freeze Dryer', icon:'❄️', tag:'Premium Industrial',
+    capacity:'30 kg – 1,500 kg/batch', dryTime:'12–24 hrs', cost:'₹8,00,000 – ₹1,00,00,000+',
+    energy:'Uninterrupted electricity only.',
+    bestFor:[
+      'Premium heat-sensitive produce — mango, strawberry, berries, bamboo shoots, mushrooms',
+      'Maximum preservation of nutrition, colour, aroma, and texture in any fruit or vegetable',
+      'Long shelf-life export, institutional, or pharmaceutical products'
+    ],
+    avoid:[
+      'Sites with power cuts — even one short interruption can ruin the entire batch',
+      'Cost-sensitive or high-volume commodity operations',
+      'Batches above 1,500 kg — exceeds maximum capacity'
+    ],
+    cautions:[
+      'Power must not cut out during drying — even a short cut can spoil the entire batch',
+      'The most expensive option per kg dried — only practical for very high-value products',
+      'Only makes financial sense if you have a buyer willing to pay a significant premium'
+    ],
+    batchOk:['medium','large','xlarge'], budgetOk:['b6','b7'],
+    catOk:['horti','otherfruit','vegetables','herbs','specialty','__slurry__'], slurryOk:['pulp','dairy'],
+    climateOk:['high','moderate','low'], elecOk:['stable'],
+    industrial:true
+  }
+};
+
+// ── RANK HELPERS ───────────────────────────────────────
+var BRANK  = {tiny:0,small:1,medium:2,large:3,xlarge:4,bulk:5};
+var BUDRANK = {b1:0,b2:1,b3:2,b4:3,b5:4,b6:5,b7:6};
+
+// ── SCORING ─────────────────────────────────────────────
+function scoreD(key, relaxClimate, relaxElec) {
+  relaxClimate = !!relaxClimate; relaxElec = !!relaxElec;
+  var d = DRYERS[key], cat = S.broadCat;
+
+  // Effective batch accounts for low-density volume upscaling
+  var effBatch = effectiveBatchKey();
+  var br  = BRANK[effBatch];
+  var budR = BUDRANK[S.budget];
+
+  // ── HARD BLOCKS ──────────────────────────────────────
+
+  // Category / form check
+  if (S.form === 'slurry') {
+    if (!d.slurryOk) return {s:-1,block:true,why:'Not designed for liquid or paste processing'};
+    if (d.slurryOk.indexOf(S.slurryType)===-1) return {s:-1,block:true,why:'Not suited for this slurry type'};
+  } else {
+    if (d.catOk[0]==='__slurry__') return {s:-1,block:true,why:'Industrial liquid dryer — not for solid produce'};
+    if (d.catOk.indexOf(cat)===-1)  return {s:-1,block:true,why:'Not recommended for '+(CATS[cat]?CATS[cat].label:cat)};
+  }
+
+  // Fluidized: granular/powder form only — hard block for solid form
+  if (key==='fluidized' && S.form!=='granular')
+    return {s:-1,block:true,why:'Only for granular or powder-form spices — not for solid or whole produce'};
+
+  // Cabinet and Fluidized hard-blocked for grains
+  if (cat==='grains' && (key==='cabinet'||key==='fluidized'))
+    return {s:-1,block:true,why:'Not recommended for grain drying — use Bubble or Tunnel Dryer'};
+
+  // Tunnel hard-blocked for horti (temperature-sensitive delicate fruits)
+  if (cat==='horti' && key==='tunnel')
+    return {s:-1,block:true,why:'Cannot control temperature precisely enough for delicate high-value fruits'};
+
+  // Tunnel hard-blocked when export=yes
+  if (S.export==='yes' && key==='tunnel')
+    return {s:-1,block:true,why:'Not export-ready — no reliable temperature control without IoT add-on'};
+
+  // Box Dryer hard-blocked for no electricity + low sunshine
+  if (key==='box' && S.elec==='none' && S.climate==='low')
+    return {s:-1,block:true,why:'Solar-only in low sunshine — not enough energy for reliable drying'};
+
+  // Cabinet: hard block if no electricity AND low sunshine
+  if (key==='cabinet' && S.elec==='none' && S.climate==='low')
+    return {s:-1,block:true,why:'Solar-only in low sunshine — not enough energy for reliable drying'};
+
+  // Cabinet: hard block below b3 budget
+  if (key==='cabinet' && budR < 2)
+    return {s:-1,block:true,why:'Budget too low — Cabinet Tray Dryer minimum cost is ₹60,000 (select b3 or above)'};
+
+  // Bubble: batch hard-block — BUT use effectiveBatchKey() so low-density grains (millets)
+  // are assessed by volume not weight. Millets at 'tiny' weight = 'small' volume — still qualifies.
+  var effBatchForBubbleCheck = effectiveBatchKey();
+  if (key==='bubble' && (effBatchForBubbleCheck==='tiny'))
+    return {s:-1,block:true,why:'Batch volume too small for Bubble Dryer — use a Box Dryer instead'};
+
+  // Bubble + low sunshine
+  if (!relaxClimate && key==='bubble' && S.climate==='low')
+    return {s:-1,block:true,why:'Solar-only dryer — low sunshine is not enough for safe grain drying'};
+
+  // Electricity check
+  if (!relaxElec && d.elecOk.indexOf(S.elec)===-1) {
+    if (S.elec==='none') return {s:-1,block:true,why:'Needs electricity — not suitable for off-grid sites'};
+    return {s:-1,block:true,why:'Needs stable electricity'};
+  }
+
+  // Climate check
+  if (!relaxClimate && d.climateOk.indexOf(S.climate)===-1)
+    return {s:-1,block:true,why:'Climate conditions not suitable'};
+
+  // Batch check (±1 band tolerance, but Bubble already hard-blocked above)
+  var bVals = d.batchOk.map(function(b){return BRANK[b];});
+  var bmin  = Math.min.apply(null,bVals), bmax = Math.max.apply(null,bVals);
+  if (br < bmin-1) return {s:-1,block:true,why:'Batch volume too small for this dryer'};
+  if (br > bmax+1) return {s:-1,block:true,why:'Batch volume too large for this dryer'};
+
+  // Space check
+  if (d.needsSpace==='large' && S.space==='small')
+    return {s:-1,block:true,why:'Not enough space — needs more than 100 m²'};
+  // Moderate space: soft warning + penalty for Bubble/Tunnel, not a hard block
+  // Field team should verify — 25–100 m² may still work for smaller Bubble/Tunnel units
+
+  // Budget check: hard block if more than 1 band below minimum
+  var budVals = d.budgetOk.map(function(b){return BUDRANK[b];});
+  var budMin  = Math.min.apply(null,budVals);
+  var budMax  = Math.max.apply(null,budVals);
+  if (budR < budMin-1) return {s:-1,block:true,why:'Budget significantly too low for this dryer type'};
+  if (budR < budMin)   return {s:-1,block:true,why:'Budget may be tight for this dryer — consider a lower-cost option'};
+
+  // Over-spec guard — block industrial/large dryers for small-batch simple users
+  var smallBatch = br <= BRANK['small'];
+  var smallUser  = S.user==='individual'||S.user==='shg';
+  var simpleCats = ['spices','animal','grains','herbs'];
+  if (smallBatch && smallUser && simpleCats.indexOf(cat)!==-1) {
+    if (key==='vacuum'||key==='freeze'||key==='fluidized'||key==='spray'||key==='drum')
+      return {s:-1,block:true,why:'Over-specified for this scale and product — simpler dryer is more appropriate'};
+    if (key==='tunnel')
+      return {s:-1,block:true,why:'Too large for small-batch individual or SHG use'};
+  }
+
+  // Industrial guard
+  if (d.industrial && smallUser && budR < 4)
+    return {s:-1,block:true,why:'Industrial dryer not feasible at this user scale or budget'};
+
+  // ── SCORE ────────────────────────────────────────────
+  var sc = 25;
+
+  // Batch fit
+  sc += d.batchOk.indexOf(effBatch)!==-1 ? 20 : 5;
+
+  // Budget fit
+  if (d.budgetOk.indexOf(S.budget)!==-1) sc += 20;
+  else if (budR > budMax)                sc += 3;
+  else                                   sc += 8;
+
+  // Climate scoring
+  if (S.climate==='high')          sc += 10;
+  else if (S.climate==='moderate') sc += 6;
+  else {
+    sc += 1;
+    if (key==='box'||key==='cabinet') sc -= 6;
+    if (key==='tunnel')               sc -= 10;
+  }
+
+  // Electricity scoring
+  if (S.elec==='none' && (key==='cabinet'||key==='box')) sc -= 15;
+  if (key==='bubble' && S.climate==='moderate')           sc -= 8;
+  if (S.elec==='none' && key==='bubble')                  sc += 18;
+  if (S.elec==='stable')                                  sc += 5;
+
+  // Category-specific scoring
+  var highMoist = ['horti','otherfruit','vegetables','specialty'];
+  if (highMoist.indexOf(cat)!==-1) {
+    if (key==='cabinet')   sc += 14;
+    if (key==='freeze')    sc += 18;
+    if (key==='vacuum')    sc += 12;
+    if (key==='box')       sc -= 22;
+    if (key==='bubble')    sc -= 30;
+  }
+  if (cat==='grains') {
+    if (key==='bubble')    sc += 22;
+    if (key==='tunnel')    sc += 15;
+    if (key==='cabinet')   sc -= 60;
+    if (key==='fluidized') sc -= 60;
+    if (key==='box')       sc -= 50;
+  }
+  if (cat==='horti') {
+    if (key==='freeze')    sc += 20;
+    if (key==='vacuum')    sc += 15;
+    if (key==='cabinet')   sc += 15;
+  }
+  if (cat==='otherfruit') {
+    if (key==='freeze')    sc += 15;
+    if (key==='vacuum')    sc += 14;
+    if (key==='cabinet')   sc += 10;
+  }
+  if (cat==='herbs') {
+    if (key==='vacuum')    sc += 18;
+    if (key==='cabinet')   sc += 12;
+    if (key==='box')       sc -= 10; // no temp control, herbs need careful drying
+  }
+  if (cat==='vegetables') {
+    if (key==='vacuum')    sc += 14;
+    if (key==='freeze')    sc += 12;
+    if (key==='cabinet')   sc += 12;
+  }
+  if (cat==='spices') {
+    if (key==='cabinet')   sc += 8;
+    if (key==='box')       sc += 10;
+  }
+  if (cat==='animal') {
+    // Budget drives fish recommendation
+    if (key==='cabinet')   sc += (budR >= 2 ? 18 : 2);  // cabinet strongly preferred if budget b3+
+    if (key==='box')       sc += (budR < 2 ? 18 : 4);   // box preferred if budget tight (b1/b2)
+    if (key==='tunnel')    sc += 8;
+  }
+  if (cat==='specialty') {
+    if (key==='freeze')    sc += 20;
+    if (key==='vacuum')    sc += 15;
+    if (key==='cabinet')   sc += 8;
+  }
+
+  // Export + budget drives Vacuum preference (replaces hasAroma logic)
+  if (key==='vacuum') {
+    if (budR >= 3)                        sc += 12; // budget allows vacuum
+    if (S.export==='yes' && budR >= 3)    sc += 18; // export + budget = strong vacuum preference
+    if (S.export==='yes' && budR < 3)     sc -= 5;  // export desired but can't afford vacuum
+  }
+  if (key==='freeze') {
+    if (S.export==='yes' && budR >= 4)    sc += 15;
+  }
+
+  // Export scoring
+  if (S.export==='yes') {
+    if (['cabinet','vacuum','freeze'].indexOf(key)!==-1) sc += 15;
+    if (key==='box'||key==='bubble')                     sc -= 20;
+  } else {
+    if (key==='box'||key==='bubble') sc += 5;
+    if (key==='tunnel')              sc += 10;
+  }
+
+  // Frequency scoring
+  if (S.freq==='daily'      && key==='tunnel')  sc += 12;
+  if (S.freq==='seasonal'   && key==='bubble')  sc += 8;
+  if (S.freq==='occasional' && key==='box')     sc += 8;
+
+  // User type scoring
+  if (S.user==='individual') { if (key==='box')     sc += 15; if (key==='cabinet') sc += 3; }
+  if (S.user==='shg')        { if (key==='cabinet'||key==='bubble') sc += 10; }
+  if (S.user==='sme')        { if (key==='tunnel'||key==='cabinet') sc += 12; if (key==='vacuum') sc += 8; }
+
+  // Space scoring
+  if (S.space==='moderate' && (key==='bubble'||key==='tunnel')) sc -= 10; // space warning, not a block
+
+  // Over-budget: if user has MORE budget than dryer needs, don't penalise.
+  // Bubble at b4 budget is fine — user can afford it AND Tunnel. Bubble wins on cost/simplicity.
+  // Only penalise if it's an industrial dryer that's clearly under-specified for their budget.
+  if (budR > budMax + 1 && !['bubble','box'].includes(key)) sc -= 10;
+
+  return {s:sc, block:false};
+}
+
+// ── TIER LOGIC ─────────────────────────────────────────
+function getTiers() {
+  var cat = S.broadCat, st = S.slurryType;
+  var goodSun = S.climate==='high'||S.climate==='moderate';
+  var medLargeBatch = S.batch==='large'||S.batch==='xlarge'||S.batch==='bulk';
+  var smeUser = S.user==='sme';
+  var budR = BUDRANK[S.budget];
+
+  if (S.form==='slurry') {
+    if (st==='papad')   return {ideal:'cabinet',  realistic:'cabinet', fit:null};
+    if (st==='dairy')   return {ideal:'spray',    realistic:'spray',   fit:null};
+    if (st==='pulp')    return {ideal:'spray',    realistic:'drum',    fit:null};
+    if (st==='viscous') return {ideal:'drum',     realistic:'drum',    fit:null};
+    return {ideal:'spray', realistic:'spray', fit:null};
+  }
+
+  if (cat==='horti') return {
+    ideal:'freeze', realistic:'vacuum', fit:null,
+    idealNeedsElec:true, realisticNeedsElec:true,
+    noElecFallback:'cabinet',
+    noElecMsg:'These fruits need controlled drying temperature. The best dryers (Freeze Dryer, Vacuum Dryer) need stable electricity. Without electricity, a Cabinet Tray Dryer on solar is the only option — quality will be lower and consistency cannot be guaranteed. Please refer this case to the SELCO team for a solar+battery assessment.'
+  };
+
+  if (cat==='specialty') return {
+    ideal:'freeze', realistic:'vacuum', fit:null,
+    idealNeedsElec:true, realisticNeedsElec:true,
+    noElecFallback:'cabinet',
+    noElecMsg:'The best dryers for this product need stable electricity. Without electricity, a solar Cabinet Tray Dryer is the fallback — quality will be lower. Consider asking the SELCO team about a solar+battery upgrade.'
+  };
+
+  if (cat==='otherfruit') return {ideal:'freeze', realistic:'cabinet', fit:null, idealNeedsElec:true};
+  if (cat==='vegetables') return {ideal:'vacuum', realistic:'cabinet', fit:null, idealNeedsElec:true};
+  if (cat==='herbs')      return {ideal:'vacuum', realistic:'cabinet', fit:null, idealNeedsElec:true};
+
+  // Spices: export → Vacuum ideal. Local large scale → Tunnel ideal. Small scale → Cabinet/Box
+  if (cat==='spices') {
+    if (S.export==='yes') {
+      return {ideal:'vacuum', realistic:'cabinet', fit:null, idealNeedsElec:true};
+    }
+    if (medLargeBatch && (smeUser||S.user==='shg')) {
+      return {ideal:'tunnel', realistic:'cabinet', fit:null};
+    }
+    return {ideal:'cabinet', realistic:'box', fit:null};
+  }
+
+  // Grains: realistic never Cabinet — budget/sun drives Bubble vs Tunnel
+  if (cat==='grains') {
+    var grainIdeal = (medLargeBatch && (smeUser||S.user==='shg')) ? 'tunnel' : 'bubble';
+    var grainReal;
+    if (S.elec==='none') {
+      grainReal = goodSun ? 'bubble' : null;
+    } else {
+      grainReal = goodSun ? 'bubble' : 'tunnel';
+    }
+    return {ideal:grainIdeal, realistic:grainReal, fit:null,
+      noElecMsg:(!goodSun&&S.elec==='none')?'Off-grid grain drying in low sunshine is very difficult. A Bubble Dryer will not dry reliably without adequate sun. Please talk to the SELCO team about options.':null};
+  }
+
+  // Fish & Meat: budget and energy driven
+  if (cat==='animal') {
+    var fishIdeal = (medLargeBatch && smeUser) ? 'tunnel' : 'cabinet';
+    var fishRealistic = budR >= 2 ? 'cabinet' : 'box'; // b3+ can afford cabinet (min ₹60k)
+    return {ideal:fishIdeal, realistic:fishRealistic, fit:null};
+  }
+
+  return {ideal:'cabinet', realistic:'cabinet', fit:null};
+}
+
+// ── COMPUTE ─────────────────────────────────────────────
+function compute() {
+  var keys = Object.keys(DRYERS);
+  var scored = keys.map(function(k){var r=scoreD(k);r.key=k;return r;});
+  var eligible = scored.filter(function(r){return !r.block;}).sort(function(a,b){return b.s-a.s;});
+  var relaxMsg = '';
+
+  if (!eligible.length) {
+    var s2 = keys.map(function(k){var r=scoreD(k,true,false);r.key=k;return r;});
+    eligible = s2.filter(function(r){return !r.block;}).sort(function(a,b){return b.s-a.s;});
+    if (eligible.length) relaxMsg='No dryer perfectly matches your sunshine conditions. Showing the closest option — the field team should check actual sun hours and consider adding an electric backup heater.';
+  }
+  if (!eligible.length) {
+    var s3 = keys.map(function(k){var r=scoreD(k,true,true);r.key=k;return r;});
+    eligible = s3.filter(function(r){return !r.block;}).sort(function(a,b){return b.s-a.s;});
+    if (eligible.length) relaxMsg='No dryer matches all your conditions. Showing the nearest option — it needs better electricity or solar access. Talk to the SELCO team before going ahead.';
+  }
+
+  var primary = eligible.length ? eligible[0] : null;
+  var tiers   = getTiers();
+
+  document.getElementById('formArea').style.display='none';
+  document.getElementById('stepper').style.display='none';
+  document.getElementById('results').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  if (!primary && S.form!=='slurry' && !(tiers&&tiers.noElecFallback)) {
+    document.getElementById('resHeader').innerHTML=
+      '<div class="res-eyebrow fade">Assessment Complete</div>'+
+      '<div class="res-h fade">No Standard Match Found</div>'+
+      '<div class="res-sub fade2">The conditions entered do not match any standard dryer. Please talk to the SELCO technical team for a custom assessment.</div>';
+    document.getElementById('recCards').innerHTML='';
+    document.getElementById('compZone').innerHTML='';
+    buildSummary(null,tiers,scored);
+    return;
+  }
+
+  var pd = primary ? DRYERS[primary.key] : (tiers&&tiers.noElecFallback ? DRYERS[tiers.noElecFallback] : null);
+  var pdName = pd ? pd.icon+' '+pd.name : 'See recommendations below';
+
+  document.getElementById('resHeader').innerHTML=
+    '<div class="res-eyebrow fade">Assessment Complete</div>'+
+    '<div class="res-h fade">'+pdName+' <span style="font-size:15px;font-weight:400;color:var(--sub)">— primary recommendation</span></div>'+
+    '<div class="res-sub fade2">'+snapLine()+'</div>'+
+    (relaxMsg?'<div class="nb nb-warn fade"><span class="nb-sym">⚠️</span><div class="nb-txt">'+relaxMsg+'</div></div>':'');
+
+  renderAlerts(primary,tiers);
+  renderTierCards(primary,tiers,scored);
+  if (S.form!=='slurry') renderTable(scored);
+  buildSummary(primary,tiers,scored);
+}
+
+function snapLine() {
+  var cat = S.form==='slurry'?(S.slurryType||''):(CATS[S.broadCat]?CATS[S.broadCat].label:'');
+  var itemArr = Array.from(S.items).slice(0,3).map(function(id2){
+    var list = CATS[S.broadCat]?CATS[S.broadCat].items:[];
+    var found = list.filter(function(i){return i.id===id2;})[0];
+    return found?found.name:id2;
+  });
+  var items = S.items.size>0?'('+itemArr.join(', ')+(S.items.size>3?'…':'')+')':'';
+  var ld = isLowDensity() ? ' <span style="color:var(--amber);font-weight:700">⚠ Low-density — batch upscaled</span>' : '';
+  return '<strong>'+cap(S.user)+'</strong> · <strong>'+cat+' '+items+'</strong>'+ld+' · Batch: <strong>'+S.batch+'</strong> · Budget: <strong>'+S.budget+'</strong> · '+cap(S.climate)+' sunshine · Electricity: <strong>'+S.elec+'</strong> · Space: <strong>'+cap(S.space)+'</strong>';
+}
+
+// ── ALERTS ──────────────────────────────────────────────
+function renderAlerts(primary,tiers) {
+  var msgs=[], pk=primary?primary.key:null;
+
+  // ── No-electricity tier warning
+  if (S.elec==='none'&&tiers&&tiers.noElecMsg) {
+    msgs.push('<div class="nb nb-warn fade"><span class="nb-sym">🌡️</span><div class="nb-txt"><strong>'+tiers.noElecMsg+'</strong></div></div>');
+  }
+
+  // ── Cabinet + no electricity (good/moderate sunshine): allow but show prominent warning + SELCO referral
+  if (S.elec==='none' && pk==='cabinet') {
+    msgs.push('<div class="nb nb-err fade"><span class="nb-sym">🚨</span><div class="nb-txt"><strong>Cabinet Tray Dryer — No electricity at this site.</strong> This dryer is designed to run on electricity with solar as a supplement. Running on solar only is possible in good or moderate sunshine, but drying quality, consistency, and temperature control will be significantly lower than with electric backup.<br><br>An electric backup heater is <strong>strongly required</strong> for reliable results, especially for fish, herbs, and delicate produce.<br><br><strong>→ Please refer this case to the SELCO technical team</strong> to assess solar+battery+electric backup heater options before finalising the installation.</div></div>');
+  } else if (S.elec==='none' && pk==='box') {
+    msgs.push('<div class="nb nb-warn fade"><span class="nb-sym">🌞</span><div class="nb-txt"><strong>Box Dryer — running on solar only:</strong> The sun is the only heat source. This works in sunny or moderately sunny areas — drying will take longer and depends on weather. Always use a moisture meter before packing. Do not dry during cloudy or rainy spells. Temperature cannot be controlled.</div></div>');
+  }
+
+  // ── Low density volume warning
+  if (isLowDensity() && S.batch !== effectiveBatchKey()) {
+    var ldCat = S.broadCat==='herbs' ? 'herbs and leafy crops' :
+                S.broadCat==='grains' ? 'millets' : 'large-piece spices';
+    msgs.push('<div class="nb nb-warn fade"><span class="nb-sym">📦</span><div class="nb-txt"><strong>Volume Alert — '+ldCat+' have low bulk density.</strong> '+cap(S.batch)+' by weight fills the tray and floor space of a <strong>'+effectiveBatchKey()+' batch</strong> of denser produce. The dryer recommendation above has been adjusted for this. <strong>Ask the field team to verify tray count and loading depth before finalising the order.</strong></div></div>');
+  }
+
+  // ── Fish / animal safety flags — ALWAYS shown for this category
+  if (S.broadCat==='animal') {
+    msgs.push('<div class="nb nb-warn fade"><span class="nb-sym">🐟</span><div class="nb-txt"><strong>Fish & Seafood — Pre-treatment is mandatory before drying:</strong><br>① <strong>Wash and clean thoroughly</strong> — remove scales, guts, and all blood; rinse with clean water<br>② <strong>Salt the fish</strong> (wet or dry salting) — reduces moisture content and prevents bacterial and fungal growth<br>③ <strong>Drain for several hours</strong> before loading into the dryer — excess liquid slows drying and increases spoilage risk<br>④ <strong>Check moisture is below 25%</strong> before packing and storage<br><br>A Cabinet or Tunnel Dryer gives significantly better hygiene and shelf life than a Box Dryer or open sun drying.</div></div>');
+    if (pk==='box') {
+      msgs.push('<div class="nb nb-err fade"><span class="nb-sym">🪲</span><div class="nb-txt"><strong>Insect & contamination risk with Box Dryer:</strong> A Box Dryer is significantly better than open sun drying — but check that all mesh screens are intact before each batch and inspect regularly during drying. Flies can still access the drying chamber if mesh is damaged. Upgrade to a Cabinet Tray Dryer as soon as budget allows (minimum ₹60,000) for reliable insect exclusion.</div></div>');
+    }
+  }
+
+  // ── Grain off-grid off-sun warning
+  if (S.elec==='none'&&S.broadCat==='grains'&&pk==='bubble') {
+    msgs.push('<div class="nb nb-ok fade"><span class="nb-sym">☀️</span><div class="nb-txt"><strong>Good fit for off-grid grain drying:</strong> The Bubble Dryer runs fully on solar — no electricity needed. Make sure you have more than 100 m² of open space and consistent sunshine.</div></div>');
+  }
+
+  // ── Cabinet power setup note
+  if (pk==='cabinet'&&S.elec!=='none') {
+    msgs.push('<div class="nb nb-ok fade"><span class="nb-sym">⚡</span><div class="nb-txt"><strong>Cabinet Tray Dryer — power setup:</strong> Solar panels help reduce electricity use, but <strong>an electric backup is a must</strong>. A <strong>heat pump</strong> version uses significantly less electricity — choose it when budget allows. For delicate produce, verify the thermostat is calibrated before each batch.</div></div>');
+  }
+
+  // ── Box Dryer no temp control warning
+  if (pk==='box') {
+    msgs.push('<div class="nb nb-warn fade"><span class="nb-sym">🌡️</span><div class="nb-txt"><strong>Box Dryer — no temperature control:</strong> Even with an electric backup fitted, you cannot set or control the drying temperature. Only suitable for basic drying — not for export, delicate fruits, or crops where precise heat matters.</div></div>');
+  }
+
+  // ── Tunnel IoT note
+  if (pk==='tunnel') {
+    msgs.push('<div class="nb nb-info fade"><span class="nb-sym">📡</span><div class="nb-txt"><strong>Tunnel Dryer — temperature control needs an add-on:</strong> A standard Tunnel Dryer does not automatically control temperature. For consistent quality, export compliance, or batch traceability, a smart monitoring (IoT) add-on is required. Talk to the SELCO team to include this in the project design.</div></div>');
+  }
+
+  // ── Bubble moderate sun caution
+  if (pk==='bubble'&&S.climate==='moderate') {
+    msgs.push('<div class="nb nb-warn fade"><span class="nb-sym">⛅</span><div class="nb-txt"><strong>Bubble Dryer in moderate sunshine:</strong> Drying will take longer on cloudy days. Always check grain moisture before bagging. Do not dry during rainy or overcast spells — the grain will not reach safe moisture levels.</div></div>');
+  }
+
+  // ── Low sunshine + electric primary warning
+  if (S.climate==='low'&&S.elec!=='none'&&(pk==='box'||pk==='cabinet'||pk==='tunnel')) {
+    msgs.push('<div class="nb nb-warn fade"><span class="nb-sym">☁️</span><div class="nb-txt"><strong>Low sunshine area — electricity carries most of the drying load:</strong> There is little solar heat gain in this location. The electric element will do most of the work — plan for higher electricity bills. Consider improving solar access (orientation, shading, reflection) to reduce operating cost.</div></div>');
+  }
+
+  // ── Better dryers available note (when electricity prevents ideal)
+  if (S.elec!=='stable'&&tiers&&!tiers.noElecMsg&&(tiers.idealNeedsElec||tiers.realisticNeedsElec)) {
+    msgs.push('<div class="nb nb-info fade"><span class="nb-sym">⚡</span><div class="nb-txt"><strong>Better dryers become available with reliable electricity:</strong> The Ideal or Best Realistic options need stable power. If you can improve electricity access or add a solar+battery system, better options open up — discuss with the SELCO team.</div></div>');
+  }
+
+  // ── Export + cabinet note
+  if (S.export==='yes'&&pk==='cabinet') {
+    msgs.push('<div class="nb nb-ok fade"><span class="nb-sym">✈️</span><div class="nb-txt"><strong>Cabinet Tray Dryer for export:</strong> Can meet export standards when used with a calibrated thermostat and working electric backup. Confirm exact moisture and hygiene requirements with your buyer or FSSAI before finalising. A Vacuum Dryer is a stronger option for export if budget allows.</div></div>');
+  }
+
+  // ── Papad / thin-sheet note
+  if (S.form==='slurry'&&S.slurryType==='papad') {
+    msgs.push('<div class="nb nb-ok fade"><span class="nb-sym">🫓</span><div class="nb-txt"><strong>Drying papad and thin-sheet products:</strong> Spread paste in a thin, even layer on greased trays. Dry at 50–60°C. Too much heat causes cracking or brittleness. Always test one tray first before loading a full batch.</div></div>');
+  }
+
+  // ── Budget too low for category note
+  if (BUDRANK[S.budget]<=1&&['horti','otherfruit','vegetables','specialty'].indexOf(S.broadCat)!==-1) {
+    msgs.push('<div class="nb nb-err fade"><span class="nb-sym">💰</span><div class="nb-txt"><strong>Budget too low for this product category:</strong> Fruits, vegetables, and specialty produce need a Cabinet Tray Dryer (minimum ₹60,000 — b3 or above). Consider saving in stages or pooling funds through FPO or SHG before going ahead.</div></div>');
+  }
+
+  // ── Space warning for tunnel/bubble when moderate space
+  if ((pk==='tunnel'||pk==='bubble')&&S.space==='moderate') {
+    msgs.push('<div class="nb nb-warn fade"><span class="nb-sym">📐</span><div class="nb-txt"><strong>Space may be a constraint:</strong> A '+DRYERS[pk].name+' typically needs more than 100 m². Your stated space is 25–100 m². Ask the field team to measure the exact site dimensions before finalising the installation design.</div></div>');
+  }
+
+  document.getElementById('alertZone').innerHTML=msgs.join('');
+}
+
+// ── FEATURE BADGES ──────────────────────────────────────
+function featBadges(key,cat) {
+  var c=CAPS[key]; if(!c) return '';
+  var isExport=S.export==='yes';
+
+  var tempLabel = c.tempControl==='yes' ? '✓ Temperature Control' : c.tempControl==='iot' ? '⚠ Temp Control (add-on only)' : '✗ No Temperature Control';
+  var tempCls   = c.tempControl==='yes' ? 'feat-yes' : c.tempControl==='iot' ? 'feat-cond' : 'feat-no';
+  var expLabel  = c.exportReady ? '✓ Export Ready' : '✗ Not Export Ready';
+  var expCls    = c.exportReady ? 'feat-yes' : 'feat-no';
+  var solLabel  = c.solarRole==='only'?'☀ Solar Only':c.solarRole==='bonus'?'☀ Solar Bonus':c.solarRole==='primary'?'☀ Solar Primary':'';
+
+  var html='<div class="feat-strip">';
+  html+='<span class="feat '+tempCls+'">'+tempLabel+'</span>';
+  if (c.heatPump) html+='<span class="feat feat-yes">✓ Heat Pump Option</span>';
+  if (cat==='horti'&&c.tempControl==='yes') html+='<span class="feat feat-yes">✓ OK for Delicate Fruits</span>';
+  if (cat==='horti'&&c.tempControl!=='yes') html+='<span class="feat feat-no">✗ Not for Delicate Fruits</span>';
+  if (isExport) html+='<span class="feat '+expCls+'">'+expLabel+'</span>';
+  if (solLabel) html+='<span class="feat feat-cond">'+solLabel+'</span>';
+  html+='</div>';
+  if (c.elecBackupNote) html+='<div class="nb-in-card info" style="margin-bottom:10px">ℹ️ <strong>Energy & Control:</strong> '+c.elecBackupNote+'</div>';
+  return html;
+}
+
+// ── TIER CARDS ──────────────────────────────────────────
+function renderTierCards(primary,tiers,scored) {
+  var fitKey=primary?primary.key:null;
+  var toShow=[];
+
+  if (!fitKey&&tiers&&tiers.noElecFallback) {
+    toShow.push({key:tiers.noElecFallback,tier:'tier-fit',label:'⚠️ Only Viable Option',sublabel:'Solar-Only — Limited Quality'});
+  } else {
+    if (fitKey) toShow.push({key:fitKey,tier:'tier-fit',label:'🥉 Best Fit',sublabel:'Within Your Conditions'});
+    if (tiers) {
+      var rk=tiers.realistic;
+      if (rk&&rk!==fitKey) toShow.push({key:rk,tier:'tier-realistic',label:'🥈 Best Realistic',sublabel:'If Budget & Electricity Allow',needsElec:tiers.realisticNeedsElec});
+      var ik=tiers.ideal;
+      if (ik&&ik!==tiers.realistic&&ik!==fitKey) toShow.push({key:ik,tier:'tier-ideal',label:'🥇 Ideal',sublabel:'Gold Standard — No Constraints',needsElec:tiers.idealNeedsElec});
+      else if (ik&&ik===tiers.realistic&&ik!==fitKey&&toShow.length===1) {
+        toShow[toShow.length-1].label='🥇 Ideal & Best Realistic';
+        toShow[toShow.length-1].sublabel='Best Option When Conditions Allow';
+      }
+    }
+  }
+
+  if (!fitKey&&!(tiers&&tiers.noElecFallback)&&tiers) {
+    toShow=[];
+    if (tiers.ideal) toShow.push({key:tiers.ideal,tier:'tier-ideal',label:'🥇 Ideal',sublabel:'Best Quality Option',needsElec:tiers.idealNeedsElec});
+    if (tiers.realistic&&tiers.realistic!==tiers.ideal) toShow.push({key:tiers.realistic,tier:'tier-realistic',label:'🥈 Alternative',sublabel:'Lower Cost Option',needsElec:tiers.realisticNeedsElec});
+  }
+
+  var cols=toShow.length===1?'cols-1':toShow.length===2?'cols-2':'cols-3';
+  document.getElementById('recCards').innerHTML='<div class="rec-grid '+cols+'">'+toShow.map(function(t,i){return buildCard(t,i);}).join('')+'</div>';
+}
+
+function buildCard(t,i) {
+  var d=DRYERS[t.key];
+  var fadeClass=['fade','fade2','fade3'][i]||'fade3';
+
+  var elecNote=(t.needsElec&&S.elec!=='stable')
+    ?'<div class="nb-in-card err">⚡ <strong>Needs stable electricity.</strong> Shown as an aspiration — improve power supply first. Talk to the SELCO team about solar+battery options.</div>':'';
+
+  var solarNote=(S.elec==='none'&&t.key==='cabinet')
+    ?'<div class="nb-in-card err">🚨 <strong>No electricity at site.</strong> Solar-only operation is possible in good sunshine but quality and consistency will be significantly lower. Electric backup strongly advised. Refer to SELCO team before proceeding.</div>':
+    (S.elec==='none'&&t.key==='box')
+    ?'<div class="nb-in-card warn">🌞 <strong>Solar-only mode.</strong> Works in good or moderate sunshine. Drying takes longer — always check moisture before storing. No temperature control.</div>':'';
+
+  var ldNote=isLowDensity()&&S.batch!==effectiveBatchKey()
+    ?'<div class="nb-in-card warn">📦 <strong>Low-density product:</strong> Account for volume not just weight when loading trays. Ask field team to verify tray count before the order.</div>':'';
+
+  var fishNote=S.broadCat==='animal'
+    ?'<div class="nb-in-card warn">🐟 <strong>Pre-treat before drying:</strong> Wash → Clean → Salt → Drain before loading.</div>':'';
+
+  var badges=featBadges(t.key,S.broadCat);
+
+  return '<div class="rec-card '+t.tier+' '+fadeClass+'">'+
+    '<div class="rec-top">'+
+    '<div class="rec-tier-label">'+t.sublabel+'</div>'+
+    '<div class="rec-top-row"><div class="rec-ico">'+d.icon+'</div>'+
+    '<div><div class="rec-name">'+d.name+'</div>'+
+    '<div class="rec-badges"><span class="rb">'+t.label+'</span><span class="rb">'+d.tag+'</span></div></div></div></div>'+
+    '<div class="rec-body">'+elecNote+solarNote+ldNote+fishNote+badges+
+    '<div class="spec-grid">'+
+    '<div class="spec-box"><div class="spec-l">Capacity</div><div class="spec-v">'+d.capacity+'</div></div>'+
+    '<div class="spec-box"><div class="spec-l">Drying Time</div><div class="spec-v">'+d.dryTime+'</div></div>'+
+    '<div class="spec-box"><div class="spec-l">Cost Range</div><div class="spec-v">'+d.cost+'</div></div>'+
+    '<div class="spec-box"><div class="spec-l">Energy</div><div class="spec-v" style="font-family:\'Sora\';font-size:10px">'+d.energy+'</div></div></div>'+
+    '<div class="rec-sect">✓ Best Suited For</div>'+
+    d.bestFor.slice(0,3).map(function(x){return '<div class="rec-item"><div class="dot dot-ok"></div>'+x+'</div>';}).join('')+
+    '<div class="rec-sect">⚠ Key Things to Remember</div>'+
+    d.cautions.slice(0,3).map(function(x){return '<div class="rec-item"><div class="dot dot-warn"></div>'+x+'</div>';}).join('')+
+    '</div></div>';
+}
+
+// ── COMPARISON TABLE ────────────────────────────────────
+function renderTable(scored) {
+  var keys=Object.keys(DRYERS).filter(function(k){return DRYERS[k].catOk[0]!=='__slurry__';});
+  var rows=keys.map(function(k){
+    var r=scored.filter(function(x){return x.key===k;})[0]||{block:true,why:'—'};
+    var d=DRYERS[k],c=CAPS[k];
+    var tcBadge=c?'<br><span style="font-size:9px;color:'+(c.tempControl==='yes'?'#155724':c.tempControl==='iot'?'#7a4d00':'#721c24')+';font-weight:700">'+(c.tempControl==='yes'?'✓ Temp Control':c.tempControl==='iot'?'⚠ Temp (add-on)':'✗ No Temp Control')+'</span>':'';
+    return '<tr><td><strong>'+d.icon+' '+d.name+'</strong><br><span style="font-size:10px;color:var(--mute)">'+d.tag+'</span>'+tcBadge+'</td>'+
+      '<td style="font-family:\'JetBrains Mono\';font-size:10.5px">'+d.capacity+'</td>'+
+      '<td style="font-family:\'JetBrains Mono\';font-size:10.5px">'+d.cost+'</td>'+
+      '<td style="font-size:11px">'+d.dryTime+'</td>'+
+      '<td style="font-size:11px;color:var(--sub)">'+(r.block?'<em style="color:var(--red)">Not suitable — '+r.why+'</em>':d.bestFor[0])+'</td></tr>';
+  }).join('');
+
+  document.getElementById('compZone').innerHTML=
+    '<div class="comp-title fade3">All Dryers Compared</div>'+
+    '<div class="comp-sub">Every dryer type evaluated against your inputs</div>'+
+    '<table class="comp-table fade4"><thead><tr><th>Dryer Type</th><th>Capacity</th><th>Cost Range</th><th>Drying Time</th><th>Key Note</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+
+// ── SUMMARY ──────────────────────────────────────────────
+function buildSummary(primary,tiers,scored) {
+  var pd=primary?DRYERS[primary.key]:(tiers&&tiers.noElecFallback?DRYERS[tiers.noElecFallback]:null);
+  var rd=tiers&&tiers.realistic?DRYERS[tiers.realistic]:null;
+  var id=tiers&&tiers.ideal    ?DRYERS[tiers.ideal]    :null;
+  var catLabel=S.form==='slurry'?(S.slurryType||'—'):(CATS[S.broadCat]?CATS[S.broadCat].label:'—');
+  var catNote=S.broadCat&&CATS[S.broadCat]?CATS[S.broadCat].note:null;
+  var itemNames=S.items.size>0?Array.from(S.items).map(function(id2){
+    var list=CATS[S.broadCat]?CATS[S.broadCat].items:[];
+    var found=list.filter(function(i){return i.id===id2;})[0];
+    return found?found.name:id2;
+  }).join(', '):'—';
+
+  var effBatch=effectiveBatchKey();
+  var batchNote=isLowDensity()&&S.batch!==effBatch
+    ?' <span style="color:var(--amber);font-size:11px;font-weight:700">(effective: '+effBatch+' — low density)</span>':'';
+  var spaceLabel=S.space==='large'?'Large (&gt;100 m²)':S.space==='moderate'?'Moderate (25–100 m²)':'Small (&lt;25 m²)';
+
+  var pdField=pd?'<div class="sum-field"><div class="sum-lbl">🥉 Best Fit</div><div class="sum-val c-fit">'+pd.icon+' '+pd.name+'</div></div>':'<div class="sum-field"><div class="sum-lbl">Best Fit</div><div class="sum-val">No standard match — talk to the SELCO team</div></div>';
+  var rdField=(rd&&rd!==pd)?'<div class="sum-field"><div class="sum-lbl">🥈 Best Realistic</div><div class="sum-val c-real">'+rd.icon+' '+rd.name+'</div></div>':'';
+  var idField=id?'<div class="sum-field"><div class="sum-lbl">🥇 Ideal</div><div class="sum-val c-ideal">'+id.icon+' '+id.name+'</div></div>':'';
+  var cautions=pd?'<div class="sum-cautions"><strong>Key things to tell the user:</strong><br>'+pd.cautions.map(function(c,i){return (i+1)+'. '+c;}).join('<br>')+'</div>':'';
+
+  document.getElementById('summaryCard').innerHTML=
+    '<div class="summary-card fade4">'+
+    '<div class="summary-card-hd"><h3>📋 Assessment Summary</h3><span>'+new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+'</span></div>'+
+    '<div class="summary-body">'+
+    '<div class="sum-section"><div class="sum-sec-title">End User Profile</div><div class="sum-grid">'+
+    '<div class="sum-field"><div class="sum-lbl">User Type</div><div class="sum-val">'+cap(S.user)+'</div></div>'+
+    '<div class="sum-field"><div class="sum-lbl">Market</div><div class="sum-val">'+(S.export==='yes'?'Export / Modern Retail':'Local / Regional')+'</div></div>'+
+    '<div class="sum-field"><div class="sum-lbl">Frequency</div><div class="sum-val">'+cap(S.freq)+'</div></div>'+
+    '</div></div>'+
+    '<div class="sum-section"><div class="sum-sec-title">Commodity</div><div class="sum-grid">'+
+    '<div class="sum-field"><div class="sum-lbl">Material Form</div><div class="sum-val">'+cap(S.form)+'</div></div>'+
+    '<div class="sum-field"><div class="sum-lbl">Category</div><div class="sum-val">'+catLabel+'</div></div>'+
+    '<div class="sum-field"><div class="sum-lbl">Items Selected</div><div class="sum-val">'+itemNames+'</div></div>'+
+    '</div>'+(catNote?'<div class="nb nb-ok" style="margin-top:10px"><span class="nb-sym">💡</span><div class="nb-txt">'+catNote+'</div></div>':'')+'</div>'+
+    '<div class="sum-section"><div class="sum-sec-title">Scale &amp; Budget</div><div class="sum-grid">'+
+    '<div class="sum-field"><div class="sum-lbl">Batch Volume</div><div class="sum-val">'+(S.batch||'—')+batchNote+'</div></div>'+
+    '<div class="sum-field"><div class="sum-lbl">Capital Budget</div><div class="sum-val">'+(S.budget||'—')+'</div></div>'+
+    '</div></div>'+
+    '<div class="sum-section"><div class="sum-sec-title">Location &amp; Energy</div><div class="sum-grid">'+
+    '<div class="sum-field"><div class="sum-lbl">Sunshine</div><div class="sum-val">'+cap(S.climate)+' Sunshine</div></div>'+
+    '<div class="sum-field"><div class="sum-lbl">Electricity</div><div class="sum-val">'+cap(S.elec)+'</div></div>'+
+    '<div class="sum-field"><div class="sum-lbl">Space</div><div class="sum-val">'+spaceLabel+'</div></div>'+
+    '</div></div>'+
+    '<div class="sum-section"><div class="sum-sec-title">Recommendations</div><div class="sum-grid">'+
+    pdField+rdField+idField+
+    '</div>'+cautions+'</div>'+
+    '</div></div>';
+}
+
+// ── UI HELPERS ────────────────────────────────────────────
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):'—';}
+
+function pick(key,val,el){
+  S[key]=val;
+  var group=el.closest('.og');
+  if(group)group.querySelectorAll('.ob').forEach(function(b){b.classList.remove('sel');});
+  el.classList.add('sel');
+  if(key==='slurryType')checkSlurryWarn();
+  validate();
+}
+
+function chip(key,val,el){
+  S[key]=val;
+  var group=el.closest('.tr');
+  if(group)group.querySelectorAll('.tc').forEach(function(b){b.classList.remove('sel');});
+  el.classList.add('sel');
+  validate();
+}
+
+function pickForm(val,el){
+  S.form=val;S.slurryType=null;S.broadCat=null;S.items.clear();
+  var group=el.closest('.og');
+  if(group)group.querySelectorAll('.ob').forEach(function(b){b.classList.remove('sel');});
+  el.classList.add('sel');
+  document.getElementById('slurryPath').style.display=val==='slurry'?'block':'none';
+  document.getElementById('solidPath').style.display=(val==='solid'||val==='granular')?'block':'none';
+  document.getElementById('itemZone').style.display='none';
+  document.getElementById('tagList').innerHTML='';
+  document.querySelectorAll('#g-broadcat .bc-btn').forEach(function(b){b.classList.remove('sel');});
+  document.querySelectorAll('#g-slurry .ob').forEach(function(b){b.classList.remove('sel');});
+  document.getElementById('slurryWarn').innerHTML='';
+  if(val==='granular'){
+    var gb=document.querySelector('#g-broadcat .bc-btn[onclick*="grains"]');
+    if(gb){gb.classList.add('sel');S.broadCat='grains';loadItems('grains');}
+  }
+  validate();
+}
+
+function pickCat(cat,el){
+  S.broadCat=cat;S.items.clear();
+  document.querySelectorAll('#g-broadcat .bc-btn').forEach(function(b){b.classList.remove('sel');});
+  el.classList.add('sel');
+  loadItems(cat);
+  validate();
+}
+
+function loadItems(cat){
+  var cd=CATS[cat];if(!cd)return;
+  document.getElementById('tagZoneTitle').textContent='Items in: '+cd.label;
+  document.getElementById('tagList').innerHTML=cd.items.map(function(i){
+    return '<span class="tag" data-id="'+i.id+'" onclick="toggleItem(this,\''+i.id+'\')">'+i.name+'</span>';
+  }).join('');
+  document.getElementById('itemZone').style.display='block';
+}
+
+function toggleItem(el,id){
+  el.classList.toggle('sel');
+  if(el.classList.contains('sel'))S.items.add(id);else S.items.delete(id);
+  validate();
+}
+
+function checkSlurryWarn(){
+  var w=document.getElementById('slurryWarn');
+  if(S.slurryType&&S.slurryType!=='papad'&&S.user==='individual'){
+    w.innerHTML='<div class="nb nb-err" style="margin-top:12px"><span class="nb-sym">🚫</span><div class="nb-txt"><strong>Not feasible at individual scale:</strong> Spray and Drum Dryers are large industrial machines. Please pass this case to the SELCO technical team.</div></div>';
+  } else {w.innerHTML='';}
+}
+
+function toggleCard(n){
+  var card=document.getElementById('card'+n);
+  card.classList.toggle('open');
+  card.classList.toggle('collapsed');
+}
+
+function validate(){
+  var s1=!!(S.user&&S.export&&S.freq);
+  var s2=S.form==='slurry'?!!(S.slurryType):!!(S.form&&S.broadCat);
+  var s3=!!(S.batch&&S.budget);
+  var s4=!!(S.climate&&S.elec&&S.space);
+  for(var n=1;n<=4;n++){
+    var done=[s1,s2,s3,s4][n-1];
+    var el=document.getElementById('p'+n);
+    el.textContent=done?'✓ Done':'Pending';
+    el.className='pill '+(done?'pill-done':'pill-pend');
+  }
+  stepperUpdate(s1,s2,s3,s4);
+  document.getElementById('goBtn').disabled=!(s1&&s2&&s3&&s4);
+}
+
+function stepperUpdate(s1,s2,s3,s4){
+  var on=[true,s1,s1&&s2,s1&&s2&&s3,s1&&s2&&s3&&s4];
+  for(var i=1;i<=5;i++){
+    var c=document.getElementById('sc'+i),l=document.getElementById('sl'+i);
+    if(on[i-1]&&!on[i]){c.className='st-dot active';l.className='st-lbl active';c.textContent=i;}
+    else if(on[i])      {c.className='st-dot done';  l.className='st-lbl';        c.textContent='✓';}
+    else                {c.className='st-dot';        l.className='st-lbl';        c.textContent=i;}
+  }
+  for(var j=1;j<=4;j++){
+    document.getElementById('sln'+j).className='st-line'+(on[j]?' done':'');
+  }
+}
+
+function resetAll(){
+  S.user=null;S.export=null;S.freq=null;S.form=null;
+  S.slurryType=null;S.broadCat=null;S.items=new Set();
+  S.batch=null;S.budget=null;S.climate=null;S.elec=null;S.space=null;
+
+  document.getElementById('formArea').style.display='block';
+  document.getElementById('stepper').style.display='flex';
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('resHeader').innerHTML='';
+  document.getElementById('alertZone').innerHTML='';
+  document.getElementById('recCards').innerHTML='';
+  document.getElementById('compZone').innerHTML='';
+  document.getElementById('summaryCard').innerHTML='';
+
+  document.querySelectorAll('.ob.sel,.tc.sel,.bc-btn.sel,.tag.sel').forEach(function(el){el.classList.remove('sel');});
+  document.getElementById('slurryPath').style.display='none';
+  document.getElementById('solidPath').style.display='none';
+  document.getElementById('slurryWarn').innerHTML='';
+  document.getElementById('itemZone').style.display='none';
+  document.getElementById('tagList').innerHTML='';
+  document.getElementById('goBtn').disabled=true;
+
+  for(var n=1;n<=4;n++){
+    var card=document.getElementById('card'+n);
+    var pill=document.getElementById('p'+n);
+    if(n===1){card.className='card open';}else{card.className='card collapsed';}
+    pill.textContent='Pending';
+    pill.className='pill pill-pend';
+  }
+  stepperUpdate(false,false,false,false);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+  function downloadPDF() {
+  var element = document.getElementById("results");
+  html2pdf().from(element).save("SELCO_Dryer_Recommendation.pdf");
+}
+</script>
+ 
+</body>
+</html>
